@@ -43,9 +43,36 @@ const config = convict({
     }
   },
   database: {
-    mysql: {
+    staging: {
       name: {
-        doc: 'The name of the database',
+        doc: 'The name of the stagingdatabase',
+        default: 'quackdbstaging',
+        env: 'QUACK_DB_STAGING_NAME'
+      },
+      port: {
+        doc: 'The port to listen to',
+        default: 3306,
+        env: 'QUACK_DB_STAGING_PORT'
+      },
+      host: {
+        doc: 'The host to listen to',
+        default: '127.0.0.1',
+        env: 'QUACK_DB_STAGING_HOST'
+      },
+      user: {
+        doc: 'The user for staging database login',
+        default: 'quackdbuserstaging',
+        env: 'QUACK_DB_STAGING_USER'
+      },
+      password: {
+        doc: 'The password for staging database login',
+        default: 'quackdbpasswordstaging',
+        env: 'QUACK_DB_STAGING_PASSWORD'
+      }
+    },
+    production: {
+      name: {
+        doc: 'The name of the production database',
         default: 'quackdb',
         env: 'QUACK_DB_NAME'
       },
@@ -60,12 +87,12 @@ const config = convict({
         env: 'QUACK_DB_HOST'
       },
       user: {
-        doc: 'The user for database login',
+        doc: 'The user for production database login',
         default: 'quackdbuser',
         env: 'QUACK_DB_USER'
       },
       password: {
-        doc: 'The password for database login',
+        doc: 'The password for production database login',
         default: 'quackdbpassword',
         env: 'QUACK_DB_PASSWORD'
       }
