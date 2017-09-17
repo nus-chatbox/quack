@@ -3,36 +3,11 @@ const Model = require('objection').Model;
 
 class User extends Model {
 
+  /******************************* Fields ********************************/
+
   // Table name is the only required property.
   static get tableName() {
     return 'users';
-  }
-
-  // Returns a Promise that resolves to the foundOrCreated User
-  static findOrCreate(userAttributes) {
-    // Validation
-    let requiredFields = ['facebookId'];
-    let missingFields = _.filter(requiredFields, (requiredField) => {
-      return _.isEmpty(userAttributes) || _.isEmpty(userAttributes[requiredField]);
-    });
-
-    if (missingFields.length > 0) {
-      return Promise.reject('User.findOrCreate expects: ' + missingFields.toString());
-    }
-
-    // Try to find user, create if not found
-    let user = User._construct(userAttributes);
-    let userPromise = User.query().where('facebookId', userAttributes.facebookId).then((users) => {
-      if (_.isEmpty(users)) {
-        return User.query().insert(user);
-      } else {
-        return Promise.resolve(users[0]);
-      }
-    }).catch((err) => {
-      return Promise.reject(err);
-    });
-
-    return userPromise;
   }
 
   static get fields() {
@@ -97,6 +72,30 @@ class User extends Model {
     };
   }
 
+  /*************************** Public Methods ****************************/
+
+  // Returns a Promise that resolves to the foundOrCreated User
+  static findOrCreate(userAttributes) {
+    // Validation
+    if (!User._isValidAttributes(userAttributes)) {
+      return Promise.reject('User.findOrCreate expects: ' + User._requiredFields(userAttributes));
+    }
+
+    // Try to find user, create if not found
+    let user = User._construct(userAttributes);
+    let userPromise = User.query().where('facebookId', userAttributes.facebookId).then((users) => {
+      if (_.isEmpty(users)) {
+        return User.query().insert(user);
+      } else {
+        return Promise.resolve(users[0]);
+      }
+    }).catch((err) => {
+      return Promise.reject(err);
+    });
+
+    return userPromise;
+  }
+
   /*************************** Private Methods ***************************/
 
   // This method wraps the User plain constructor by mutating a vanilla User
@@ -110,6 +109,19 @@ class User extends Model {
       user[writableField] = userAttributes[writableField];
     });
     return user;
+  }
+
+  static _requiredFields(userAttributes) {
+    return ['facebookId'];
+  }
+
+  static _isValidAttributes(userAttributes) {
+    let requiredFields = User._requiredFields(userAttributes);
+    let missingFields = _.filter(requiredFields, (requiredField) => {
+      return _.isNil(userAttributes) || _.isNil(userAttributes[requiredField]);
+    });
+
+    return missingFields.length === 0;
   }
 }
 

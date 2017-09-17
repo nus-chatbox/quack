@@ -1,9 +1,17 @@
+const _ = require('lodash');
 const Model = require('objection').Model;
 
-class Room extends User {
+class Room extends Model {
+
+  /******************************* Fields ********************************/
+
   // Table name is the only required property.
   static get tableName() {
     return 'rooms';
+  }
+
+  static get fields() {
+    return _.keys(Room.jsonSchema.properties);
   }
 
   // For validation only
@@ -61,10 +69,46 @@ class Room extends User {
             from: 'subscriptions.roomId',
             to: 'subscriptions.userId'
           },
-          to: 'user.id'
+          to: 'users.id'
         }
       }
     };
+  }
+
+  /*************************** Public Methods ****************************/
+
+  // Returns a Promise that resolves to the foundOrCreated User
+  static create(roomAttributes) {
+    // Validation
+    if (!Room._isValidAttributes(roomAttributes)) {
+      return Promise.reject('Room.create expects: ' + Room._requiredFields(roomAttributes));
+    }
+
+    // Try to find user, create if not found
+    let room = new Room();
+    let writableFields = _.filter(Room.fields, (roomField) => {
+      return roomField !== 'id';
+    });
+    _.forEach(writableFields, (writableField) => {
+      room[writableField] = roomAttributes[writableField];
+    });
+
+    return Room.query().insert(room);
+  }
+
+  /*************************** Private Methods ***************************/
+
+  static _requiredFields(roomAttributes) {
+    return ['ownerId', 'latitude', 'longitude'];
+  }
+
+  static _isValidAttributes(roomAttributes) {
+    let requiredFields = Room._requiredFields(roomAttributes);
+    let missingFields = _.filter(requiredFields, (requiredField) => {
+      return _.isNil(roomAttributes) || _.isNil(roomAttributes[requiredField]);
+    });
+
+    return missingFields.length === 0;
   }
 }
 
