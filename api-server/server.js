@@ -20,8 +20,6 @@ const Message = require('./Models/message');
 const Room = require('./Models/room');
 const Subscription = require('./Models/subscription');
 
-const UserController = require('./Controllers/user');
-
 const app = express();
 app.use(bodyParser.json());
 
@@ -92,7 +90,7 @@ app.post("/authenticate", (req, res) => {
     let fbResponse = JSON.parse(fbResponseJSON);
     let newFbToken = fbResponse.access_token;
 
-    let userPromise = UserController.findOrCreate({facebookId: fbId});
+    let userPromise = User.findOrCreate({facebookId: fbId});
     userPromise.then((user) => {
       let userTokenSubject = {
         user: user,
