@@ -29,7 +29,7 @@ class Subscription extends Model {
     return {
       user: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user',
+        modelClass: __dirname + '/user.js',
         join: {
           from: 'subscriptions.userId',
           to: 'users.id'
@@ -37,7 +37,7 @@ class Subscription extends Model {
       },
       room: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/room',
+        modelClass: __dirname + '/room.js',
         join: {
           from: 'subscriptions.roomId',
           to: 'rooms.id'

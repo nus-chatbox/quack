@@ -38,7 +38,7 @@ class Message extends User {
     return {
       owner: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user',
+        modelClass: __dirname + '/user.js',
         join: {
           from: 'messages.userId',
           to: 'users.id'
@@ -46,7 +46,7 @@ class Message extends User {
       },
       room: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/Movie',
+        modelClass: __dirname + '/room.js',
         join: {
           from: 'messages.roomId',
           to: 'rooms.id'
