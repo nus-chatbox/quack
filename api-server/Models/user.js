@@ -1,9 +1,25 @@
 const Model = require('objection').Model;
 
 class User extends Model {
+
   // Table name is the only required property.
   static get tableName() {
     return 'users';
+  }
+
+  static create(userAttributes) {
+    let user = new User();
+    let writableFields = _.filter(User.fields, (userField) => {
+      return userField !== 'id';
+    });
+    _.forEach(writableFields, (writableField) => {
+      user[writableField] = userAttributes[writableField];
+    });
+    return user;
+  }
+
+  static get fields() {
+    return _.keys(User.jsonSchema.properties);
   }
 
   // For validation only
