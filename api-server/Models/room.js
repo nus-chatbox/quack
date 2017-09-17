@@ -38,7 +38,7 @@ class Room extends User {
     return {
       owner: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user',
+        modelClass: __dirname + '/user.js',
         join: {
           from: 'rooms.ownerId',
           to: 'users.id'
@@ -46,7 +46,7 @@ class Room extends User {
       },
       messages: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/message',
+        modelClass: __dirname + '/message.js',
         join: {
           from: 'rooms.id',
           to: 'messages.roomId'
@@ -54,7 +54,7 @@ class Room extends User {
       },
       subscribers: {
         relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/user',
+        modelClass: __dirname + '/user.js',
         join: {
           from: 'rooms.id',
           through: {

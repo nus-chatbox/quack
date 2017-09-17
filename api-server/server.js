@@ -15,6 +15,10 @@ const knex = Knex(knexConfiguration[nodeEnv]);
 
 // Give the connection to objection.
 Model.knex(knex);
+const User = require('./Models/user');
+const Message = require('./Models/message');
+const Room = require('./Models/room');
+const Subscription = require('./Models/subscription');
 
 const app = express();
 app.use(bodyParser.json());
