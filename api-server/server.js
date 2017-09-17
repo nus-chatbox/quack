@@ -2,7 +2,7 @@ const _ = require('lodash');
 const express = require('express');
 const config = require('../config/api-server');
 const bodyParser = require('body-parser');
-const nodeEnv = isEmpty(process.env.NODE_ENV) ? 'development' : process.env.NODE_ENV;
+const nodeEnv = _.isEmpty(process.env.NODE_ENV) ? 'development' : process.env.NODE_ENV;
 
 // Database libraries
 const objection = require('objection');
