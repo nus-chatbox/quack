@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Model = require('objection').Model;
 
 class User extends Model {
@@ -10,42 +11,28 @@ class User extends Model {
   // Returns a Promise that resolves to the foundOrCreated User
   static findOrCreate(userAttributes) {
     // Validation
-    let requiredFields =  ['facebookId'];
+    let requiredFields = ['facebookId'];
     let missingFields = _.filter(requiredFields, (requiredField) => {
       return _.isEmpty(userAttributes) || _.isEmpty(userAttributes[requiredField]);
     });
 
     if (missingFields.length > 0) {
-      return Promise.reject("User.findOrCreate expects: " + missingFields.toString());
+      return Promise.reject('User.findOrCreate expects: ' + missingFields.toString());
     }
 
     // Try to find user, create if not found
-    let user = User.construct_(userAttributes);
+    let user = User._construct(userAttributes);
     let userPromise = User.query().where('facebookId', userAttributes.facebookId).then((users) => {
       if (_.isEmpty(users)) {
         return User.query().insert(user);
       } else {
-        let foundUser = users[0];
-        return Promise.resolve(foundUser);
+        return Promise.resolve(users[0]);
       }
     }).catch((err) => {
       return Promise.reject(err);
     });
-    
-    return userPromise;
-  }
 
-  // This method wraps the User plain constructor by mutating a vanilla User
-  // This allows us to avoid mutating the constructor, itself
-  static construct_(userAttributes) {
-    let user = new User();
-    let writableFields = _.filter(User.fields, (userField) => {
-      return userField !== 'id';
-    });
-    _.forEach(writableFields, (writableField) => {
-      user[writableField] = userAttributes[writableField];
-    });
-    return user;
+    return userPromise;
   }
 
   static get fields() {
@@ -81,7 +68,7 @@ class User extends Model {
     return {
       messages: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/message.js',
+        modelClass: path.join(__dirname, 'message.js'),
         join: {
           from: 'users.id',
           to: 'messages.userId'
@@ -89,7 +76,7 @@ class User extends Model {
       },
       subscriptions: {
         relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/room.js',
+        modelClass: path.join(__dirname, 'room.js'),
         join: {
           from: 'users.id',
           through: {
@@ -101,13 +88,28 @@ class User extends Model {
       },
       rooms: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/room.js',
+        modelClass:path.join(__dirname, 'room.js'),
         join: {
           from: 'users.id',
           to: 'rooms.ownerId'
         }
       }
     };
+  }
+
+  /*************************** Private Methods ***************************/
+
+  // This method wraps the User plain constructor by mutating a vanilla User
+  // This allows us to avoid mutating the constructor, itself
+  static _construct(userAttributes) {
+    let user = new User();
+    let writableFields = _.filter(User.fields, (userField) => {
+      return userField !== 'id';
+    });
+    _.forEach(writableFields, (writableField) => {
+      user[writableField] = userAttributes[writableField];
+    });
+    return user;
   }
 }
 
