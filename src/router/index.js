@@ -1,15 +1,41 @@
 import Vue from 'vue';
-import Router from 'vue-router';
-import Hello from '@/components/Hello';
+import VueRouter from 'vue-router';
 
-Vue.use(Router);
+import QuackAppView from '@/views/QuackAppView';
+import LoginView from '@/views/LoginView';
+import NotFoundView from '@/views/NotFoundView';
 
-export default new Router({
+Vue.use(VueRouter);
+
+const Router = new VueRouter({
+  mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      name: 'QuackAppView',
+      component: QuackAppView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/login',
+      name: 'LoginView',
+      component: LoginView,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '*',
+      component: NotFoundView,
+      meta: { requiresAuth: false },
     },
   ],
 });
+
+Router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
+export default Router;
