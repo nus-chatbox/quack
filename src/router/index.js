@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import store from '@/store';
 import QuackAppView from '@/views/QuackAppView';
 import LoginView from '@/views/LoginView';
+import ChatView from '@/views/ChatView';
 import NotFoundView from '@/views/NotFoundView';
 
 Vue.use(VueRouter);
@@ -22,6 +23,12 @@ const Router = new VueRouter({
       name: 'LoginView',
       component: LoginView,
       meta: { requiresAuth: false }
+    },
+    {
+      path: '/chat',
+      name: 'ChatView',
+      component: ChatView,
+      meta: { requiresAuth: true }
     },
     {
       path: '*',
