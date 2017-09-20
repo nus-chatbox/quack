@@ -18,12 +18,12 @@ import { Ripple, QBtn, QLayout } from 'quasar-framework';
 
 export default {
   directives: {
-    Ripple,
+    Ripple
   },
   components: {
     QBtn,
-    QLayout,
-  },
+    QLayout
+  }
 };
 </script>
 
