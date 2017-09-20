@@ -6,7 +6,7 @@
         <p class="caption"><h2><strong>Quack</strong></h2></p>
         <p class="caption"><h5>Make chats social again.</h5></p>
       </div>
-      <q-btn class="fb-button" icon-right="lock" big v-ripple color="#3B5998">
+      <q-btn class="fb-button" icon-right="lock" big v-ripple color="#3B5998" @click="login()">
         Sign in with Facebook
       </q-btn>
     </q-layout>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { Ripple, QBtn, QLayout } from 'quasar-framework';
+import { Ripple, QBtn, QLayout, Loading, QSpinnerCube } from 'quasar-framework';
 
 export default {
   directives: {
@@ -23,7 +23,22 @@ export default {
   components: {
     QBtn,
     QLayout
+  },
+  methods: {
+    login() {
+      Loading.show({
+        spinner: QSpinnerCube
+      });
+      this.$store.dispatch('login')
+      .then(() => {
+        // Redirect back to where user wanted to go
+        this.$router.go(-1);
+        Loading.hide();
+      });
+    }
   }
+
+
 };
 </script>
 

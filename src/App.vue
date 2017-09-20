@@ -1,14 +1,23 @@
 <template>
   <div id="app">
     <main>
-      <router-view></router-view>
+      <q-transition enter="fadeIn" leave="fadeOut" duration="350">
+        <router-view></router-view>
+      </q-transition>
     </main>
   </div>
 </template>
 
 <script>
+import { QTransition } from 'quasar-framework';
+import 'quasar-extras/animate/fadeIn.css';
+import 'quasar-extras/animate/fadeOut.css';
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    QTransition
+  }
 };
 </script>
 

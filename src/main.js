@@ -4,9 +4,10 @@ import Vue from 'vue';
 import Quasar from 'quasar-framework';
 import 'quasar-extras/material-icons';
 
-import './style/app.mat.styl';
-import App from './App';
-import router from './router';
+import '@/style/app.mat.styl';
+import App from '@/App';
+import router from '@/router';
+import store from '@/store';
 
 Vue.config.productionTip = false;
 Vue.use(Quasar);
@@ -15,6 +16,7 @@ Vue.use(Quasar);
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 });
