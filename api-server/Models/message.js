@@ -1,9 +1,17 @@
+const _ = require('lodash');
 const Model = require('objection').Model;
 
-class Message extends User {
+class Message extends Model {
+
+  /******************************* Fields ********************************/
+
   // Table name is the only required property.
   static get tableName() {
     return 'messages';
+  }
+
+  static get fields() {
+    return _.keys(Message.jsonSchema.properties);
   }
 
   // For validation only
@@ -53,6 +61,57 @@ class Message extends User {
         }
       }
     };
+  }
+
+  /*************************** Public Methods ****************************/
+
+  // Returns a Promise that resolves to the foundOrCreated User
+  static create(messageAttributes) {
+    // Validation
+    if (!Message._isValidAttributes(messageAttributes)) {
+      return Promise.reject('Message.create expects: ' + Message._requiredFields(messageAttributes));
+    }
+
+    // Try to find user, create if not found
+    let message = new Message();
+    let writableFields = _.filter(Message.fields, (messageField) => {
+      return messageField !== 'id';
+    });
+    _.forEach(writableFields, (writableField) => {
+      message[writableField] = messageAttributes[writableField];
+    });
+
+    return Message.query().insert(message);
+  }
+
+  /*************************** Private Methods ***************************/
+
+  // Determines attachmentType given messageAttributes
+  static _attachmentType(messageAttributes) {
+    if (_.isNil(messageAttributes) || messageAttributes.attachmentType !== 'image') {
+      return 'text';
+    } else {
+      return messageAttributes.attachmentType;
+    }
+  }
+
+  static _requiredFields(messageAttributes) {
+    let requiredFields = ['userId', 'attachmentType', 'roomId'];
+    if (Message._attachmentType === 'image') {
+      requiredFields.push('attachmentUrl');
+    } else {
+      requiredFields.push('text');
+    }
+    return requiredFields;
+  }
+
+  static _isValidAttributes(messageAttributes) {
+    let requiredFields = Message._requiredFields(messageAttributes);
+    let missingFields = _.filter(requiredFields, (requiredField) => {
+      return _.isNil(messageAttributes) || _.isNil(messageAttributes[requiredField]);
+    });
+
+    return missingFields.length === 0;
   }
 }
 
