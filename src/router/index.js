@@ -14,20 +14,20 @@ const Router = new VueRouter({
       path: '/',
       name: 'QuackAppView',
       component: QuackAppView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/login',
       name: 'LoginView',
       component: LoginView,
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false }
     },
     {
       path: '*',
       component: NotFoundView,
-      meta: { requiresAuth: false },
-    },
-  ],
+      meta: { requiresAuth: false }
+    }
+  ]
 });
 
 Router.beforeEach((to, from, next) => {
