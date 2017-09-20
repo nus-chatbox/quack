@@ -3,12 +3,14 @@
     <q-layout>
       <div class="layout-padding text-center">
         <p class="caption"><h2><strong>Oops! Looks like you lost your way.</strong></h2></p>
+        <router-link to="/">
+          <div class="layout-padding">
+            <q-btn icon-right="child care" big v-ripple color="primary">
+              Back to Quacking
+            </q-btn>
+          </div>
+        </router-link>
       </div>
-      <router-link to="/">
-        <q-btn icon-right="child care" big v-ripple color="primary">
-          Back to Quacking
-        </q-btn>
-      </router-link>
     </q-layout>
   </div>
 </template>
@@ -18,12 +20,12 @@ import { Ripple, QBtn, QLayout } from 'quasar-framework';
 
 export default {
   directives: {
-    Ripple,
+    Ripple
   },
   components: {
     QBtn,
-    QLayout,
-  },
+    QLayout
+  }
 };
 </script>
 
