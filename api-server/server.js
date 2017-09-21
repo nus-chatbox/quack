@@ -167,8 +167,8 @@ app.get("/rooms", passport.authenticate(["jwt"], { session: false }), (req, res)
 
 app.get("/subscriptions", passport.authenticate(["jwt"], { session: false }), (req, res) => {
   let userId = req.user.id;
-  let subscribedRoomPromise = User.query().eager('subscriptions').where('id', userId);
-  subscribedRoomPromise.then((users) => {
+  let userSubscriptionPromise = User.query().eager('subscriptions').where('id', userId);
+  userSubscriptionPromise.then((users) => {
     res.json({
       rooms: users[0].subscriptions
     });
