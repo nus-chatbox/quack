@@ -1,15 +1,17 @@
 <template>
   <div>
-    <q-layout>
+    <q-layout ref="layout" view="LHh LPr lFf">
       <q-toolbar slot="header">
         <q-btn flat icon="menu" @click="$refs.layout.toggleLeft()">
         </q-btn>
         <q-toolbar-title class="center-username">
           Nearby Quacks
         </q-toolbar-title>
-        <q-btn flat icon="settings" @click="$refs.layout.toggleLeft()">
+        <q-btn flat icon="settings" @click="">
         </q-btn>
       </q-toolbar>
+      <q-scroll-area slot="left">
+      </q-scroll-area>
       <q-pull-to-refresh :handler="refreshChatGroupList">
         <chat-group-list></chat-group-list>
       </q-pull-to-refresh>
@@ -21,7 +23,7 @@
 </template>
 
 <script>
-import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QPullToRefresh } from 'quasar-framework';
+import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QPullToRefresh, QScrollArea } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
 
 export default {
@@ -36,7 +38,8 @@ export default {
     QCard,
     ChatGroupList,
     QFixedPosition,
-    QPullToRefresh
+    QPullToRefresh,
+    QScrollArea
   },
   methods: {
     refreshChatGroupList(done) {
