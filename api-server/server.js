@@ -104,16 +104,15 @@ app.post("/authenticate", (req, res) => {
     let fbToken = userAndToken[1];
 
     let fbId = user.id;
-    let userPromise = User.findOrCreate({facebookId: fbId});
-    userPromise.then((user) => {
-      let payload = {
-        user: user
-      };
-      let jwtToken = generateUserToken(payload);
-      res.json({
-        fbToken: fbToken,
-        jwtToken: jwtToken
-      });
+    return User.findOrCreate({facebookId: fbId});
+  }).then((user) => {
+    let payload = {
+      user: user
+    };
+    let jwtToken = generateUserToken(payload);
+    res.json({
+      fbToken: fbToken,
+      jwtToken: jwtToken
     });
   }).catch((err) => {
     console.error(err);
