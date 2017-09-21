@@ -35,7 +35,9 @@ export default {
       this.$store.dispatch('login')
       .then(() => {
         // Redirect back to where user wanted to go
-        this.$router.go(-1);
+        if (this.$store.getters.isLoggedIn) {
+          this.$router.go(-1);
+        }
         Loading.hide();
       });
     }

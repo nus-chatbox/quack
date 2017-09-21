@@ -41,31 +41,11 @@ app.use(passport.initialize());
 const fbClientId = config.get("authentication.facebook.clientId");
 const fbClientSecret = config.get("authentication.facebook.clientSecret");
 
-const generateUserToken = (userTokenSubject) => {
-  const expiresIn = "7d";
-  const issuer = config.get("authentication.token.issuer");
-  const audience = config.get("authentication.token.audience");
-  const secret = config.get("authentication.token.secret");
-
-  let userToken = jwt.sign({}, secret, {
-    expiresIn: expiresIn,
-    audience: audience,
-    issuer: issuer,
-    subject: JSON.stringify(userTokenSubject)
-  });
-  return userToken;
-};
-
-const exchangeFbToken = (fbToken) => {
-  let query = "?grant_type=fb_exchange_token" + 
-              "&client_id=" + fbClientId + 
-              "&client_secret=" + fbClientSecret + 
-              "&fb_exchange_token=" + fbToken;
-
+const httpsGet = (fullUrl) => {
   return new Promise((resolve, reject) => {
-    https.get("https://graph.facebook.com/oauth/access_token" + query, (res) => {
+    https.get(fullUrl, (res) => {
       if (res.statusCode !== 200) {
-        reject("Got status code " + res.statuscode + " while exchanging fb token");
+        reject("Status code: " + res.statusCode + " for " + fullUrl);
       } else {
         let responseData = "";
         res.on("data", (dataChunk) => {
@@ -81,28 +61,63 @@ const exchangeFbToken = (fbToken) => {
   });
 };
 
+const generateUserToken = (payload) => {
+  const expiresIn = "7d";
+  const issuer = config.get("authentication.token.issuer");
+  const audience = config.get("authentication.token.audience");
+  const secret = config.get("authentication.token.secret");
+
+  let userToken = jwt.sign({}, secret, {
+    expiresIn: expiresIn,
+    audience: audience,
+    issuer: issuer,
+    subject: JSON.stringify(payload)
+  });
+  return userToken;
+};
+
+const exchangeFbToken = (fbToken) => {
+  let fullUrl = "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token" + 
+              "&client_id=" + fbClientId + 
+              "&client_secret=" + fbClientSecret + 
+              "&fb_exchange_token=" + fbToken;
+
+  return httpsGet(fullUrl);
+};
+
+const getFBUser = (fbToken) => {
+  let fullUrl = "https://graph.facebook.com/me?access_token=" + fbToken;
+  return httpsGet(fullUrl);
+};
+
 app.post("/authenticate", (req, res) => {
-  let fbToken = req.body.token;
-  let fbDisplayName = req.body.name;
-  let fbId = req.body.id;
+  let fbToken = req.body.fbToken;
 
   exchangeFbToken(fbToken).then((fbResponseJSON) => {
     let fbResponse = JSON.parse(fbResponseJSON);
     let newFbToken = fbResponse.access_token;
+    return newFbToken;
+  }).then((newFbToken) => {
+    return Promise.all([getFBUser(newFbToken), Promise.resolve(newFbToken)]);
+  }).then((userAndToken) => {
+    let user = JSON.parse(userAndToken[0]);
+    let fbToken = userAndToken[1];
 
-    let userPromise = User.findOrCreate({facebookId: fbId});
-    userPromise.then((user) => {
-      let userTokenSubject = {
-        user: user,
-        fbToken: newFbToken
-      };
-
-      let jwtToken = generateUserToken(userTokenSubject);
-      res.json({
-        token: jwtToken
-      });
+    let fbId = user.id;
+    return Promise.all([User.findOrCreate({facebookId: fbId}), Promise.resolve(fbToken)]);
+  }).then((userAndToken) => {
+    let user = userAndToken[0];
+    let fbToken = userAndToken[1];
+    let payload = {
+      user: user
+    };
+    let jwtToken = generateUserToken(payload);
+    res.json({
+      fbToken: fbToken,
+      jwtToken: jwtToken
     });
   }).catch((err) => {
+    console.error(err);
     res.json({
       token: null
     });
