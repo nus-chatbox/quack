@@ -104,8 +104,10 @@ app.post("/authenticate", (req, res) => {
     let fbToken = userAndToken[1];
 
     let fbId = user.id;
-    return User.findOrCreate({facebookId: fbId});
-  }).then((user) => {
+    return Promise.all([User.findOrCreate({facebookId: fbId}), Promise.resolve(fbToken)]);
+  }).then((userAndToken) => {
+    let user = userAndToken[0];
+    let fbToken = userAndToken[1];
     let payload = {
       user: user
     };
