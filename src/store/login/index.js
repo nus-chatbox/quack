@@ -4,8 +4,8 @@
 /* eslint-disable prefer-template */
 export default {
   state: {
-    fbToken: null,
-    jwtToken: null
+    fbToken: window.localStorage.getItem('fbToken'),
+    jwtToken: window.localStorage.getItem('jwtToken')
   },
   getters: {
     isLoggedIn(state) {
@@ -16,9 +16,14 @@ export default {
     login(state, payload) {
       state.fbToken = payload.fbToken;
       state.jwtToken = payload.jwtToken;
+      window.localStorage.setItem('fbToken', payload.fbToken);
+      window.localStorage.setItem('jwtToken', payload.jwtToken);
     },
     logout(state) {
       state.fbToken = null;
+      state.jwtToken = null;
+      window.localStorage.setItem('fbToken', null);
+      window.localStorage.setItem('jwtToken', null);
     }
   },
   actions: {
