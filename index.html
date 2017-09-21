@@ -24,6 +24,27 @@
         for (var file of chunk.files) {
           if (file.match(/\.(js|css)$/)) { %>
     <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>"><% }}} %>
+    <script>
+      window.fbAppId = "<%= (process.env.NODE_ENV === 'development') ? 115488992481148 : 1226546120785421 %>";
+      window.apiUrl = "<%= (process.env.NODE_ENV === 'development') ? 'http://localhost:3001' : 'https://api.quack.press' %>";
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : fbAppId,
+          cookie     : true,
+          xfbml      : true,
+          version    : "v2.10"
+        });
+        FB.AppEvents.logPageView();   
+      };
+
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+        })(document, 'script', 'facebook-jssdk');
+      </script>
   </head>
   <body>
     <noscript>
