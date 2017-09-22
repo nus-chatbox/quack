@@ -4,7 +4,7 @@ const config = convict({
   express: {
     port: {
       doc: 'The port to listen on',
-      default: 3000,
+      default: 3001,
       env: 'PORT'
     },
     ip: {

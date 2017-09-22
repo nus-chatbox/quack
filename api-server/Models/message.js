@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const path = require('path');
 const Model = require('objection').Model;
 
 class Message extends Model {
