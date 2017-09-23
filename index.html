@@ -48,7 +48,16 @@
   </head>
   <body>
     <noscript>
-      This is your fallback content in case JavaScript fails to load.
+      <br>
+      <center>
+        <div style="font-family: '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #0c0c0c;">
+          <img src="<%= htmlWebpackPlugin.files.publicPath %>static/img/icons/nojslogo.png" alt = "">
+          <strong>
+            <p class="caption" style="font-size:300%;">Sorry!</p>
+            <p class="caption">Please enable JavaScript to use Quack</p>
+          </strong>
+        </div>
+      </center>
     </noscript>
     <div id="app"></div>
     <!-- Todo: only include in production -->
