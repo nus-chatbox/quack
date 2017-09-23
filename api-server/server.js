@@ -175,10 +175,15 @@ app.get("/subscriptions", passport.authenticate(["jwt"], { session: false }), (r
   });
 });
 
-
 const port = config.get('express.port');
 const ip = config.get('express.ip');
+const server = app.listen(port, ip);
+const io = require('socket.io')(server);
 
-app.listen(port, ip, () => {
-  console.log('Server started on port ' + port);
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
 });
+
