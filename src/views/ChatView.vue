@@ -5,7 +5,21 @@
       <q-toolbar-title class="center-username">
         Brunch this weekend?
       </q-toolbar-title>
-      <q-btn flat icon="settings" @click="$refs.layout.toggleLeft()">
+      <q-btn flat icon="settings">
+        <q-popover ref="popover">
+          <table class="q-table">
+            <tr>
+            <q-toggle v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="anom(anonymous)" />
+            </tr>
+            <tr>
+            <q-btn flat class="full-width">Invite Friend</q-btn>
+            </tr>
+            <tr>
+            <q-btn flat class="full-width">Report Chat</q-btn>
+            </tr>
+          </table>
+        </q-list>
+        </q-popover>
       </q-btn>
     </q-toolbar>
     <div class="layout-padding">
@@ -59,7 +73,9 @@
 </template>
 
 <script>
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QInput } from 'quasar-framework';
+import 'quasar-extras/animate/bounceInDown.css';
+import 'quasar-extras/animate/fadeOut.css';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QTable } from 'quasar-framework';
 
 export default {
   components: {
@@ -69,15 +85,52 @@ export default {
     QToolbar,
     QToolbarTitle,
     QBtn,
-    QInput
+    QPopover,
+    QInput,
+    QToggle,
+    QList,
+    QItem,
+    QItemMain,
+    QOptionGroup,
+    Alert,
+    QTable
   },
   methods: {
     exitChat() {
       this.$router.push({ path: '/' });
+    },
+    anom(anonymous) {
+      let alert = null;
+      if (anonymous) {
+        alert = Alert.create({
+          color: 'blue',
+          icon: 'visibility',
+          html: 'You\'re now public',
+          enter: 'bounceInDown',
+          leave: 'bounceOutUp',
+          position: 'top-center',
+          id: 'one',
+          dismissible: true
+        });
+      } else {
+        alert = Alert.create({
+          color: 'green',
+          icon: 'visibility off',
+          html: 'You\'re now Anonmyous',
+          enter: 'bounceInDown',
+          leave: 'bounceOutUp',
+          position: 'top-center',
+          dismissible: true
+        });
+      }
+      window.setTimeout(() => {
+        alert.dismiss();
+      }, 10);
     }
   },
   data() {
     return {
+      anonymous: true,
       message: '',
       messages: [
         {
@@ -159,6 +212,14 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    anchor() {
+      return `${this.anchorOrigin.vertical} ${this.anchorOrigin.horizontal}`;
+    },
+    self() {
+      return `${this.selfOrigin.vertical} ${this.selfOrigin.horizontal}`;
+    }
   }
 };
 </script>
@@ -166,4 +227,17 @@ export default {
 <style scoped lang="stylus">
 .message-input
   margin: 0
+.q-table
+  border: 10px solid rgb(52,73,94)
+.q-list
+  font-size: inherit
+.q-popover
+  min-width: 150px
+  color: white
+  background: rgb(52,73,94)
+.q-toggle-handle
+  background-color: rgb(27, 188, 155)
+  border-style: none
+button
+  font-size: 100%
 </style>
