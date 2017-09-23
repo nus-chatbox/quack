@@ -36,6 +36,7 @@ module.exports = {
     // forbid trailing commas
     'comma-dangle': ['error', 'never'],
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+	"linebreak-style": 0
   }
 }
