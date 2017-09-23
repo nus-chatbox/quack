@@ -6,6 +6,7 @@ const nodeEnv = _.isEmpty(process.env.NODE_ENV) ? 'development' : process.env.NO
 
 // Database libraries
 const objection = require('objection');
+const raw = objection.raw;
 const Model = objection.Model;
 const Knex = require('knex');
 
@@ -37,6 +38,21 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const passportJwt = require('passport-jwt');
 app.use(passport.initialize());
+
+const passportJWTOptions = {
+  jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: config.get("authentication.token.secret"),
+  issuer: config.get("authentication.token.issuer"),
+  audience: config.get("authentication.token.audience")
+};
+
+passport.use(new passportJwt.Strategy(passportJWTOptions, function(jwtPayload, done) {
+    let user = JSON.parse(jwtPayload.sub).user;
+    return done(null, user);
+}));
+
+
+/*********************** FB Authentication ****************************/
 
 const fbClientId = config.get("authentication.facebook.clientId");
 const fbClientSecret = config.get("authentication.facebook.clientSecret");
@@ -123,6 +139,42 @@ app.post("/authenticate", (req, res) => {
     });
   });
 });
+
+
+/******************************* Rooms ********************************/
+
+app.get("/rooms", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+  let userLatitude = req.user.latitude;
+  let userLongitude = req.user.longitude;
+
+  let nearbyRoomPromise = Room.query().select(
+    raw("*, (6371 * acos(cos(radians(:userLatitude)) * " + 
+                        "cos(radians(latitude)) * " + 
+                        "cos(radians(longitude) - " + 
+                            "radians(:userLongitude)) + " +
+                        "sin(radians(:userLatitude)) * " +
+                        "sin(radians(latitude)))) as distance", {
+    userLatitude: userLatitude,
+    userLongitude: userLongitude
+  })).having("distance", "<=", 1).orderBy("distance", "asc");
+
+  nearbyRoomPromise.then((rooms) => {
+    res.json({
+      rooms: rooms
+    });
+  });
+});
+
+app.get("/subscriptions", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+  let userId = req.user.id;
+  let userSubscriptionPromise = User.query().eager('subscriptions').where('id', userId);
+  userSubscriptionPromise.then((users) => {
+    res.json({
+      rooms: users[0].subscriptions
+    });
+  });
+});
+
 
 const port = config.get('express.port');
 const ip = config.get('express.ip');
