@@ -30,9 +30,13 @@
       window.apiUrl = "<%= (process.env.NODE_ENV === 'development') ? 'http://localhost:3001' : 'https://api.quack.press' %>";
 
       window.apiSocket = io.connect(window.apiUrl);
-      apiSocket.on('news', function (data) {
-        console.log(data);
-        apiSocket.emit('my other event', { my: 'data' });
+
+      apiSocket.on('connect', function() {
+         apiSocket.emit('room', '1');
+      });
+
+      apiSocket.on('message', function(message) {
+        console.log(message);
       });
 
       window.fbAsyncInit = function() {
