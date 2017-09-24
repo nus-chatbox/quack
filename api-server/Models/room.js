@@ -1,5 +1,7 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable spaced-comment */
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
-const path = require('path');
 const Model = require('objection').Model;
 
 class Room extends Model {
@@ -41,13 +43,13 @@ class Room extends Model {
         }
       }
     };
-  };
+  }
 
   static get relationMappings() {
     return {
       owner: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user.js',
+        modelClass: `${__dirname}/user.js`,
         join: {
           from: 'rooms.ownerId',
           to: 'users.id'
@@ -55,7 +57,7 @@ class Room extends Model {
       },
       messages: {
         relation: Model.HasManyRelation,
-        modelClass: __dirname + '/message.js',
+        modelClass: `${__dirname}/message.js`,
         join: {
           from: 'rooms.id',
           to: 'messages.roomId'
@@ -63,7 +65,7 @@ class Room extends Model {
       },
       subscribers: {
         relation: Model.ManyToManyRelation,
-        modelClass: __dirname + '/user.js',
+        modelClass: `${__dirname}/user.js`,
         join: {
           from: 'rooms.id',
           through: {
@@ -82,12 +84,12 @@ class Room extends Model {
   static create(roomAttributes) {
     // Validation
     if (!Room._isValidAttributes(roomAttributes)) {
-      return Promise.reject('Room.create expects: ' + Room._requiredFields(roomAttributes));
+      return Promise.reject(`Room.create expects: ${Room._requiredFields(roomAttributes)}`);
     }
 
     // Try to find user, create if not found
-    let room = new Room();
-    let writableFields = _.filter(Room.fields, (roomField) => {
+    const room = new Room();
+    const writableFields = _.filter(Room.fields, (roomField) => {
       return roomField !== 'id';
     });
     _.forEach(writableFields, (writableField) => {
@@ -104,8 +106,8 @@ class Room extends Model {
   }
 
   static _isValidAttributes(roomAttributes) {
-    let requiredFields = Room._requiredFields(roomAttributes);
-    let missingFields = _.filter(requiredFields, (requiredField) => {
+    const requiredFields = Room._requiredFields(roomAttributes);
+    const missingFields = _.filter(requiredFields, (requiredField) => {
       return _.isNil(roomAttributes) || _.isNil(roomAttributes[requiredField]);
     });
 

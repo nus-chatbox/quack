@@ -1,5 +1,7 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable spaced-comment */
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
-const path = require('path');
 const Model = require('objection').Model;
 
 class Message extends Model {
@@ -41,13 +43,13 @@ class Message extends Model {
         }
       }
     };
-  };
+  }
 
   static get relationMappings() {
     return {
       owner: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user.js',
+        modelClass: `${__dirname}/user.js`,
         join: {
           from: 'messages.userId',
           to: 'users.id'
@@ -55,7 +57,7 @@ class Message extends Model {
       },
       room: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/room.js',
+        modelClass: `${__dirname}/room.js`,
         join: {
           from: 'messages.roomId',
           to: 'rooms.id'
@@ -70,12 +72,12 @@ class Message extends Model {
   static create(messageAttributes) {
     // Validation
     if (!Message._isValidAttributes(messageAttributes)) {
-      return Promise.reject('Message.create expects: ' + Message._requiredFields(messageAttributes));
+      return Promise.reject(`Message.create expects: ${Message._requiredFields(messageAttributes)}`);
     }
 
     // Try to find user, create if not found
-    let message = new Message();
-    let writableFields = _.filter(Message.fields, (messageField) => {
+    const message = new Message();
+    const writableFields = _.filter(Message.fields, (messageField) => {
       return messageField !== 'id';
     });
     _.forEach(writableFields, (writableField) => {
@@ -89,15 +91,15 @@ class Message extends Model {
 
   // Determines attachmentType given messageAttributes
   static _attachmentType(messageAttributes) {
-    if (_.isNil(messageAttributes) || messageAttributes.attachmentType !== 'image') {
-      return 'text';
-    } else {
-      return messageAttributes.attachmentType;
+    let attachmentType = 'text';
+    if (!_.isNil(messageAttributes) && messageAttributes.attachmentType === 'image') {
+      attachmentType = 'image';
     }
+    return attachmentType;
   }
 
   static _requiredFields(messageAttributes) {
-    let requiredFields = ['userId', 'attachmentType', 'roomId'];
+    const requiredFields = ['userId', 'attachmentType', 'roomId'];
     if (Message._attachmentType === 'image') {
       requiredFields.push('attachmentUrl');
     } else {
@@ -107,8 +109,8 @@ class Message extends Model {
   }
 
   static _isValidAttributes(messageAttributes) {
-    let requiredFields = Message._requiredFields(messageAttributes);
-    let missingFields = _.filter(requiredFields, (requiredField) => {
+    const requiredFields = Message._requiredFields(messageAttributes);
+    const missingFields = _.filter(requiredFields, (requiredField) => {
       return _.isNil(messageAttributes) || _.isNil(messageAttributes[requiredField]);
     });
 
