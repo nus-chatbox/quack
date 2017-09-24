@@ -214,14 +214,6 @@ export default {
         }
       ]
     };
-  },
-  computed: {
-    anchor() {
-      return `${this.anchorOrigin.vertical} ${this.anchorOrigin.horizontal}`;
-    },
-    self() {
-      return `${this.selfOrigin.vertical} ${this.selfOrigin.horizontal}`;
-    }
   }
 };
 </script>
