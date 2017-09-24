@@ -1,5 +1,7 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable spaced-comment */
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
-const path = require('path');
 const Model = require('objection').Model;
 
 class Subscription extends Model {
@@ -32,13 +34,13 @@ class Subscription extends Model {
         }
       }
     };
-  };
+  }
 
   static get relationMappings() {
     return {
       user: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/user.js',
+        modelClass: `${__dirname}/user.js`,
         join: {
           from: 'subscriptions.userId',
           to: 'users.id'
@@ -46,7 +48,7 @@ class Subscription extends Model {
       },
       room: {
         relation: Model.BelongsToOneRelation,
-        modelClass: __dirname + '/room.js',
+        modelClass: `${__dirname}/room.js`,
         join: {
           from: 'subscriptions.roomId',
           to: 'rooms.id'
@@ -61,12 +63,12 @@ class Subscription extends Model {
   static create(subscriptionAttributes) {
     // Validation
     if (!Subscription._isValidAttributes(subscriptionAttributes)) {
-      return Promise.reject('Subscription.create expects: ' + Subscription._requiredFields(subscriptionAttributes));
+      return Promise.reject(`Subscription.create expects: ${Subscription._requiredFields(subscriptionAttributes)}`);
     }
 
     // Try to find user, create if not found
-    let subscription = new Subscription();
-    let writableFields = _.filter(Subscription.fields, (subscriptionField) => {
+    const subscription = new Subscription();
+    const writableFields = _.filter(Subscription.fields, (subscriptionField) => {
       return subscriptionField !== 'id';
     });
     _.forEach(writableFields, (writableField) => {
@@ -83,8 +85,8 @@ class Subscription extends Model {
   }
 
   static _isValidAttributes(subscriptionAttributes) {
-    let requiredFields = Subscription._requiredFields(subscriptionAttributes);
-    let missingFields = _.filter(requiredFields, (requiredField) => {
+    const requiredFields = Subscription._requiredFields(subscriptionAttributes);
+    const missingFields = _.filter(requiredFields, (requiredField) => {
       return _.isNil(subscriptionAttributes) || _.isNil(subscriptionAttributes[requiredField]);
     });
 

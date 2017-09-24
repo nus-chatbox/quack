@@ -1,5 +1,7 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable spaced-comment */
+/* eslint-disable no-underscore-dangle */
 const _ = require('lodash');
-const path = require('path');
 const Model = require('objection').Model;
 
 class User extends Model {
@@ -44,7 +46,7 @@ class User extends Model {
     return {
       messages: {
         relation: Model.HasManyRelation,
-        modelClass: path.join(__dirname, 'message.js'),
+        modelClass: `${__dirname}/message.js`,
         join: {
           from: 'users.id',
           to: 'messages.userId'
@@ -52,7 +54,7 @@ class User extends Model {
       },
       subscriptions: {
         relation: Model.ManyToManyRelation,
-        modelClass: path.join(__dirname, 'room.js'),
+        modelClass: `${__dirname}/room.js`,
         join: {
           from: 'users.id',
           through: {
@@ -64,7 +66,7 @@ class User extends Model {
       },
       rooms: {
         relation: Model.HasManyRelation,
-        modelClass:path.join(__dirname, 'room.js'),
+        modelClass: `${__dirname}/room.js`,
         join: {
           from: 'users.id',
           to: 'rooms.ownerId'
@@ -79,17 +81,19 @@ class User extends Model {
   static findOrCreate(userAttributes) {
     // Validation
     if (!User._isValidAttributes(userAttributes)) {
-      return Promise.reject('User.findOrCreate expects: ' + User._requiredFields(userAttributes));
+      return Promise.reject(`User.findOrCreate expects: ${User._requiredFields(userAttributes)}`);
     }
 
     // Try to find user, create if not found
-    let user = User._construct(userAttributes);
-    let userPromise = User.query().where('facebookId', userAttributes.facebookId).then((users) => {
+    const user = User._construct(userAttributes);
+    const userPromise = User.query().where('facebookId', userAttributes.facebookId).then((users) => {
+      let returnedUser = null;
       if (_.isEmpty(users)) {
-        return User.query().insert(user);
+        returnedUser = User.query().insert(user);
       } else {
-        return Promise.resolve(users[0]);
+        returnedUser = Promise.resolve(users[0]);
       }
+      return returnedUser;
     }).catch((err) => {
       return Promise.reject(err);
     });
@@ -102,8 +106,8 @@ class User extends Model {
   // This method wraps the User plain constructor by mutating a vanilla User
   // This allows us to avoid mutating the constructor, itself
   static _construct(userAttributes) {
-    let user = new User();
-    let writableFields = _.filter(User.fields, (userField) => {
+    const user = new User();
+    const writableFields = _.filter(User.fields, (userField) => {
       return userField !== 'id';
     });
     _.forEach(writableFields, (writableField) => {
@@ -117,8 +121,8 @@ class User extends Model {
   }
 
   static _isValidAttributes(userAttributes) {
-    let requiredFields = User._requiredFields(userAttributes);
-    let missingFields = _.filter(requiredFields, (requiredField) => {
+    const requiredFields = User._requiredFields(userAttributes);
+    const missingFields = _.filter(requiredFields, (requiredField) => {
       return _.isNil(userAttributes) || _.isNil(userAttributes[requiredField]);
     });
 
