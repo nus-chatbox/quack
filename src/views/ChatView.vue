@@ -10,7 +10,7 @@
           <div id="triangle"></div>
           <table class="q-table" id="sidebarTable">
             <tr>
-            <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom()" />
+            <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
             </tr>
             <tr>
             <q-btn flat class="full-width sidebarButton">Invite Friend</q-btn>
@@ -98,10 +98,9 @@ export default {
     exitChat() {
       this.$router.push({ path: '/' });
     },
-    toggleAnom() {
-      document.querySelector('.q-toggle').querySelector('.q-option-inner').querySelector('.q-toggle-handle').classList.toggle('green');
+    toggleAnom(anonymous) {
       let alert = null;
-      if (true) {
+      if (anonymous) {
         alert = Alert.create({
           color: 'tertiary',
           icon: 'visibility',
@@ -226,13 +225,11 @@ export default {
   border: 10px solid rgb(52,73,94)
 .q-popover
   overflow: visible
-.q-toggle
+#anonym
   min-width: 150px
   color: white
   background: rgb(52,73,94)
-.toggleBase
-  background-color: rgb(27, 188, 155) !important
-  border-style: none
+  width: 100%
 .sidebarButton
   font-size: 100%
   background-color: rgb(52,73,94)
@@ -244,7 +241,4 @@ export default {
   border-left: 15px solid transparent
   border-right: 15px solid transparent
   border-bottom: 15px solid rgb(52,73,94)
-.green
-  color: rgb(27, 188, 155) !important
-  border: none
 </style>
