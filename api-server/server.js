@@ -22,7 +22,10 @@ const Room = require('./Models/room');
 const Subscription = require('./Models/subscription');
 
 const app = express();
-app.use(bodyParser.json());
+const port = config.get('express.port');
+const ip = config.get('express.ip');
+const server = app.listen(port, ip);
+const io = require('socket.io')(server);
 
 // Cross-site header configurations
 app.use((req, res, next) => {
@@ -31,6 +34,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Authorization, Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
+app.use(bodyParser.json());
 
 // Authentication libraries
 const https = require("https");
@@ -175,10 +179,34 @@ app.get("/subscriptions", passport.authenticate(["jwt"], { session: false }), (r
   });
 });
 
-
-const port = config.get('express.port');
-const ip = config.get('express.ip');
-
-app.listen(port, ip, () => {
-  console.log('Server started on port ' + port);
+io.on('connect', function(socket) {
+  socket.on('room', function(room) {
+    socket.join(room);
+  });
 });
+
+app.post("/rooms/:roomId/messages", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+  let userId = req.user.id;
+  let roomId = req.params.roomId;
+  let text = req.body.text;
+
+  let messagePromise = Message.create({
+    userId: userId,
+    attachmentType: 'text',
+    roomId: roomId,
+    text: text
+  });
+
+  messagePromise.then((message) => {
+    io.to(`${roomId}`).emit('message', message);
+    res.json({
+      status: "success",
+      message: message
+    });
+  }).catch((err) => {
+    res.json({
+      status: "error"
+    });
+  });
+});
+

@@ -24,9 +24,21 @@
         for (var file of chunk.files) {
           if (file.match(/\.(js|css)$/)) { %>
     <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>"><% }}} %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script>
       window.fbAppId = "<%= (process.env.NODE_ENV === 'development') ? 115488992481148 : 1226546120785421 %>";
       window.apiUrl = "<%= (process.env.NODE_ENV === 'development') ? 'http://localhost:3001' : 'https://api.quack.press' %>";
+
+      window.apiSocket = io.connect(window.apiUrl);
+
+      apiSocket.on('connect', function() {
+         apiSocket.emit('room', '1');
+      });
+
+      apiSocket.on('message', function(message) {
+        console.log(message);
+      });
+
       window.fbAsyncInit = function() {
         FB.init({
           appId      : fbAppId,
