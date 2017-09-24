@@ -7,6 +7,7 @@
       </q-toolbar-title>
       <q-btn flat icon="settings">
         <q-popover ref="popover">
+          <div id="triangle"></div>
           <table class="q-table">
             <tr>
             <q-toggle v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="anom(anonymous)" />
@@ -75,7 +76,7 @@
 <script>
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QTable } from 'quasar-framework';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert } from 'quasar-framework';
 
 export default {
   components: {
@@ -92,8 +93,7 @@ export default {
     QItem,
     QItemMain,
     QOptionGroup,
-    Alert,
-    QTable
+    Alert
   },
   methods: {
     exitChat() {
@@ -102,8 +102,9 @@ export default {
     anom(anonymous) {
       let alert = null;
       if (anonymous) {
+        document.getElementsByClassName('q-toggle-handle')[0].style = 'background-color: rgb(27, 188, 155); border: none;';
         alert = Alert.create({
-          color: 'blue',
+          color: 'tertiary',
           icon: 'visibility',
           html: 'You\'re now public',
           enter: 'bounceInDown',
@@ -113,8 +114,9 @@ export default {
           dismissible: true
         });
       } else {
+        document.getElementsByClassName('q-toggle-handle')[0].style = 'background-color: white; border: none;';
         alert = Alert.create({
-          color: 'green',
+          color: 'positive',
           icon: 'visibility off',
           html: 'You\'re now Anonmyous',
           enter: 'bounceInDown',
@@ -235,9 +237,17 @@ export default {
   min-width: 150px
   color: white
   background: rgb(52,73,94)
-.q-toggle-handle
-  background-color: rgb(27, 188, 155)
+  overflow: visible
+.q-toggle-base
+  background-color: rgb(27, 188, 155) !important
   border-style: none
 button
   font-size: 100%
+#triangle
+  position: absolute
+  left: 75%
+  top: -10%
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 15px solid rgb(52, 73, 94);
 </style>
