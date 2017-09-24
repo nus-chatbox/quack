@@ -8,18 +8,17 @@
       <q-btn flat icon="settings">
         <q-popover ref="popover">
           <div id="triangle"></div>
-          <table class="q-table">
+          <table class="q-table" id="sidebarTable">
             <tr>
-            <q-toggle v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
+            <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom()" />
             </tr>
             <tr>
-            <q-btn flat class="full-width">Invite Friend</q-btn>
+            <q-btn flat class="full-width sidebarButton">Invite Friend</q-btn>
             </tr>
             <tr>
-            <q-btn flat class="full-width">Report Chat</q-btn>
+            <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
             </tr>
           </table>
-        </q-list>
         </q-popover>
       </q-btn>
     </q-toolbar>
@@ -99,10 +98,10 @@ export default {
     exitChat() {
       this.$router.push({ path: '/' });
     },
-    toggleAnom(anonymous) {
+    toggleAnom() {
+      document.querySelector('.q-toggle').querySelector('.q-option-inner').querySelector('.q-toggle-handle').classList.toggle('green');
       let alert = null;
-      if (anonymous) {
-        document.getElementsByClassName('q-toggle-handle')[0].style = 'background-color: rgb(27, 188, 155); border: none;';
+      if (true) {
         alert = Alert.create({
           color: 'tertiary',
           icon: 'visibility',
@@ -114,7 +113,6 @@ export default {
           dismissible: true
         });
       } else {
-        document.getElementsByClassName('q-toggle-handle')[0].style = 'background-color: white; border: none;';
         alert = Alert.create({
           color: 'positive',
           icon: 'visibility off',
@@ -218,28 +216,35 @@ export default {
 };
 </script>
 
+<!--Note:
+  1. q-popover overflow: visible cannot be helped
+-->
 <style scoped lang="stylus">
 .message-input
   margin: 0
-.q-table
+#sidebarTable
   border: 10px solid rgb(52,73,94)
-.q-list
-  font-size: inherit
 .q-popover
+  overflow: visible
+.q-toggle
   min-width: 150px
   color: white
   background: rgb(52,73,94)
-  overflow: visible
-.q-toggle-base
+.toggleBase
   background-color: rgb(27, 188, 155) !important
   border-style: none
-button
+.sidebarButton
   font-size: 100%
+  background-color: rgb(52,73,94)
+  color: white
 #triangle
   position: absolute
   left: 75%
   top: -10%
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 15px solid rgb(52, 73, 94);
+  border-left: 15px solid transparent
+  border-right: 15px solid transparent
+  border-bottom: 15px solid rgb(52,73,94)
+.green
+  color: rgb(27, 188, 155) !important
+  border: none
 </style>
