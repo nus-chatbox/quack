@@ -10,7 +10,7 @@
           <div id="triangle"></div>
           <table class="q-table">
             <tr>
-            <q-toggle v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="anom(anonymous)" />
+            <q-toggle v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
             </tr>
             <tr>
             <q-btn flat class="full-width">Invite Friend</q-btn>
@@ -99,7 +99,7 @@ export default {
     exitChat() {
       this.$router.push({ path: '/' });
     },
-    anom(anonymous) {
+    toggleAnom(anonymous) {
       let alert = null;
       if (anonymous) {
         document.getElementsByClassName('q-toggle-handle')[0].style = 'background-color: rgb(27, 188, 155); border: none;';
