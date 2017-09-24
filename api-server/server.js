@@ -147,6 +147,12 @@ app.post("/authenticate", (req, res) => {
 
 /******************************* Rooms ********************************/
 
+io.on('connect', function(socket) {
+  socket.on('room', function(room) {
+    socket.join(room);
+  });
+});
+
 app.get("/rooms", passport.authenticate(["jwt"], { session: false }), (req, res) => {
   let userLatitude = req.user.latitude;
   let userLongitude = req.user.longitude;
@@ -179,16 +185,34 @@ app.get("/subscriptions", passport.authenticate(["jwt"], { session: false }), (r
   });
 });
 
-io.on('connect', function(socket) {
-  socket.on('room', function(room) {
-    socket.join(room);
+app.get("/rooms/:roomId/messages", passport.authenticate(["jwt"], { session: false }), (req, res) => {
+  let roomId = Number(req.params.roomId);
+
+  if (_.isNaN(roomId)) {
+    res.json({
+      messages: []
+    });
+    return;
+  }
+
+  let messagePromise = Message.query().where('roomId', roomId).then((messages) => {
+    res.json({
+      messages: messages
+    });
   });
 });
 
 app.post("/rooms/:roomId/messages", passport.authenticate(["jwt"], { session: false }), (req, res) => {
   let userId = req.user.id;
-  let roomId = req.params.roomId;
+  let roomId = Number(req.params.roomId);
   let text = req.body.text;
+
+  if (_.isNaN(roomId)) {
+    res.json({
+      status: "error"
+    });
+    return;
+  }
 
   let messagePromise = Message.create({
     userId: userId,
