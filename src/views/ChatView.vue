@@ -1,6 +1,6 @@
 <template>
-  <q-layout reveal>
-    <q-toolbar slot="header">
+  <q-layout>
+    <q-toolbar class="fixed-top" slot="header">
         <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
       <q-toolbar-title class="center-username">
         Brunch this weekend?
@@ -22,10 +22,10 @@
         </q-popover>
       </q-btn>
     </q-toolbar>
-    <div class="layout-padding">
+    <div class="layout-padding message-box">
       <q-chat-message
-        v-for="msg in messages"
-        :key="msg"
+        v-for="(msg, index) in messages"
+        :key="index"
         :label="msg.label"
         :sent="msg.sent"
         :text-color="msg.textColor"
@@ -219,8 +219,18 @@ export default {
   1. q-popover overflow: visible cannot be helped
 -->
 <style scoped lang="stylus">
+message-input-height = 45px
+message-box-top-margin = message-input-height - 15px
+message-box-bottom-margin = message-input-height - 25px
+
 .message-input
   margin: 0
+  min-height: message-input-height
+
+.message-box
+  margin-top: message-box-top-margin
+  margin-bottom: message-box-bottom-margin
+
 #sidebarTable
   border: 10px solid rgb(52,73,94)
 .q-popover
