@@ -35,8 +35,10 @@
           <chat-group-list></chat-group-list>
         </q-pull-to-refresh>
         <div class="text-center main-action-margin add-button-vert">
-          <q-btn big round color="primary" @click="alert('woo')" icon="add" />
+          <q-btn big round color="primary" @click="$refs.modalWrapper.$refs.modal.open()" icon="add" />
         </div>
+        <!-- Group Creation Modal -->
+        <group-creation-modal ref="modalWrapper"></group-creation-modal>
       </div>
 
     </q-layout>
@@ -46,6 +48,7 @@
 <script>
 import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QPullToRefresh, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
+import GroupCreationModal from '@/components/GroupCreationModal';
 
 export default {
   directives: {
@@ -63,7 +66,8 @@ export default {
     QList,
     QItemSeparator,
     QToggle,
-    QListHeader
+    QListHeader,
+    GroupCreationModal
   },
   data() {
     return {
@@ -88,7 +92,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
-@import '../style/app.variables'
 
 .center-username
   display: flex
