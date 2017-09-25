@@ -40,8 +40,10 @@ const Router = new VueRouter({
 
 Router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isLoggedIn) {
+    window.gtag('config', 'UA-106948311-1', { page_path: '/login' });
     next('/login');
   } else {
+    window.gtag('config', 'UA-106948311-1', { page_path: to.path });
     next();
   }
 });
