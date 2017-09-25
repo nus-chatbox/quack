@@ -19,7 +19,7 @@ mysqluser='root'
 mysqlpass=''
 
 # Prepare statement for Quack DB dev user
-dbsetup="CREATE database quackdbdev;CREATE USER 'quackdbuserdev'@'localhost' IDENTIFIED BY 'quackdbpassworddev';GRANT ALL PRIVILEGES ON *.* TO 'quackdbuserdev'@'localhost';FLUSH PRIVILEGES"
+dbsetup="CREATE database quackdbdev;CREATE USER 'quackdbuserdev'@'localhost' IDENTIFIED BY 'quackdbpassworddev';GRANT ALL PRIVILEGES ON *.* TO 'quackdbuserdev'@'localhost';FLUSH PRIVILEGES;"
 
 # Login to admin and execute prepared SQL statement
 mysql -u $mysqluser -p $mysqlpass -e "$dbsetup"
