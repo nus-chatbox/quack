@@ -2,7 +2,7 @@
   <div>
     <q-layout ref="layout" view="LHh LPr lFf">
       <q-toolbar slot="header">
-        <q-btn flat icon="menu" @click="$refs.layout.toggleLeft()">
+        <q-btn class="icon-no-margin" flat icon="menu" @click="$refs.layout.toggleLeft()">
         </q-btn>
         <q-toolbar-title class="center-username">
           Nearby Quacks
@@ -25,11 +25,13 @@
           Log Out
         </q-btn>
       </q-list>
-      <q-pull-to-refresh :handler="refreshChatGroupList">
-        <chat-group-list></chat-group-list>
-      </q-pull-to-refresh>
-      <div class="text-center fixed-bottom main-action-margin">
-        <q-btn big round color="primary" @click="alert('woo')" icon="add" />
+      <div class="layout-view column">
+        <q-pull-to-refresh :handler="refreshChatGroupList" class="group-list-vert">
+          <chat-group-list></chat-group-list>
+        </q-pull-to-refresh>
+        <div class="text-center main-action-margin add-button-vert">
+          <q-btn big round color="primary" @click="alert('woo')" icon="add" />
+        </div>
       </div>
     </q-layout>
   </div>
@@ -80,6 +82,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
+@import '../style/app.variables'
+
 .center-username
   display: flex
   justify-content: center
@@ -95,4 +99,13 @@ export default {
 .left-nav
   height: 100%
   padding-top: 0px
+
+.layout-view
+  min-height: calc(100vh - 51px)
+
+.group-list-vert
+  flex: 400
+
+.add-button-vert
+  flex: 1
 </style>
