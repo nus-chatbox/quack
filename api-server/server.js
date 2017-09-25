@@ -102,9 +102,7 @@ const generateUserToken = (payload) => {
 
 const exchangeFbToken = (fbToken) => {
   const fullUrl = `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token\
-                   &client_id=${fbClientId}\
-                   &client_secret=${fbClientSecret}\
-                   &fb_exchange_token=${fbToken}`;
+&client_id=${fbClientId}&client_secret=${fbClientSecret}&fb_exchange_token=${fbToken}`;
 
   return httpsGet(fullUrl);
 };
