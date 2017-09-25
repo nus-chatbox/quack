@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-layout ref="layout" view="LHh LPr lFf">
+      <!-- Header with two icons -->
       <q-toolbar slot="header">
         <q-btn flat icon="menu" @click="$refs.layout.toggleLeft()">
         </q-btn>
@@ -10,6 +11,8 @@
         <q-btn flat icon="settings" @click="">
         </q-btn>
       </q-toolbar>
+
+      <!-- Drawer panel on the left -->
       <q-list slot="left" no-border class="bg-light left-nav">
         <div class="row flex-center bg-white" style="height: 100px;">
           <img src="../assets/logo.png" style="height: 75px; width 75px;"/>
@@ -25,12 +28,19 @@
           Log Out
         </q-btn>
       </q-list>
-      <q-pull-to-refresh :handler="refreshChatGroupList">
-        <chat-group-list></chat-group-list>
-      </q-pull-to-refresh>
-      <div class="text-center fixed-bottom main-action-margin">
-        <q-btn big round color="primary" @click="alert('woo')" icon="add" />
+
+      <!-- Main Body -->
+      <div class="layout-view column">
+        <q-pull-to-refresh :handler="refreshChatGroupList" class="group-list-vert">
+          <chat-group-list></chat-group-list>
+        </q-pull-to-refresh>
+        <div class="text-center main-action-margin add-button-vert">
+          <q-btn big round color="primary" @click="$refs.modalWrapper.$refs.modal.open()" icon="add" />
+        </div>
+        <!-- Group Creation Modal -->
+        <group-creation-modal ref="modalWrapper"></group-creation-modal>
       </div>
+
     </q-layout>
   </div>
 </template>
@@ -38,6 +48,7 @@
 <script>
 import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QPullToRefresh, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
+import GroupCreationModal from '@/components/GroupCreationModal';
 
 export default {
   directives: {
@@ -55,7 +66,8 @@ export default {
     QList,
     QItemSeparator,
     QToggle,
-    QListHeader
+    QListHeader,
+    GroupCreationModal
   },
   data() {
     return {
@@ -80,6 +92,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
+
 .center-username
   display: flex
   justify-content: center
@@ -95,4 +108,13 @@ export default {
 .left-nav
   height: 100%
   padding-top: 0px
+
+.layout-view
+  min-height: calc(100vh - 51px)
+
+.group-list-vert
+  flex: 400
+
+.add-button-vert
+  flex: 1
 </style>

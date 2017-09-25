@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import Quasar from 'quasar-framework';
 import 'quasar-extras/material-icons';
+import Vuelidate from 'vuelidate';
 
 import '@/style/app.mat.styl';
 import App from '@/App';
@@ -11,6 +12,7 @@ import store from '@/store';
 
 Vue.config.productionTip = false;
 Vue.use(Quasar);
+Vue.use(Vuelidate);
 
 /* eslint-disable no-new */
 new Vue({
