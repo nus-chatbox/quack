@@ -3,7 +3,7 @@
     <q-layout ref="layout" view="LHh LPr lFf">
       <!-- Header with two icons -->
       <q-toolbar slot="header">
-        <q-btn class="icon-no-margin" flat icon="menu" @click="$refs.layout.toggleLeft()">
+        <q-btn flat icon="menu" @click="$refs.layout.toggleLeft()">
         </q-btn>
         <q-toolbar-title class="center-username">
           Nearby Quacks
