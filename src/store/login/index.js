@@ -22,8 +22,8 @@ export default {
     logout(state) {
       state.fbToken = null;
       state.jwtToken = null;
-      window.localStorage.setItem('fbToken', null);
-      window.localStorage.setItem('jwtToken', null);
+      window.localStorage.removeItem('fbToken');
+      window.localStorage.removeItem('jwtToken');
     }
   },
   actions: {
