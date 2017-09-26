@@ -59,13 +59,16 @@ export default {
         });
       }).then((serverResponse) => {
         commit('login', serverResponse);
+        return Promise.resolve(serverResponse);
       }).catch((err) => {
         console.error(err);
         commit('logout');
+        return Promise.reject(err);
       });
     },
     logout({ commit }) {
       commit('logout');
+      return Promise.resolve();
     },
     serverAuthentication({ commit }, payload) {
       return fetch(window.apiUrl + '/authenticate', {
@@ -89,31 +92,32 @@ export default {
       };
       return new Promise((resolve, reject) => {
         if (window.navigator.geolocation) {
-          return window.navigator.geolocation.getCurrentPosition(resolve, reject, options);
+          window.navigator.geolocation.getCurrentPosition(resolve, reject, options);
         } else {
           reject('Geolocation is not supported in this browser');
         }
       }).then((position) => {
         commit('updateLocation', position);
-        return dispatch('updateServer', {
-          position
-        });
+        return dispatch('updateServer');
       }).then((serverResponse) => {
-        console.log(serverResponse);
-        // commit('updateJwt', serverResponse);
+        commit('updateJwt', serverResponse);
+        return Promise.resolve(serverResponse);
       }).catch((err) => {
         console.error(err);
+        return Promise.reject(err);
       });
     },
-    updateServer({ commit }, payload) {
-      return fetch(window.apiUrl + '/user', {
-        method: 'PUT',
+    updateServer({ state }) {
+      return fetch(window.apiUrl + '/users', {
+        method: 'PATCH',
         headers: {
+          Authorization: `bearer ${state.jwtToken}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          position: payload
+          latitude: state.latitude,
+          longitude: state.longitude
         })
       }).then((response) => {
         return response.json();
