@@ -65,13 +65,14 @@ fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
 ### Create a new room
 ```
 // Requires JWT authentication
-let fetchOptions = {
-  method: "POST",
-  headers: headers
-};
-
 let body = {
   title: "My first room"
+};
+
+let fetchOptions = {
+  method: "POST",
+  headers: headers,
+  body: body
 };
 
 fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
@@ -162,13 +163,14 @@ fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
 
 ```
 // Requires JWT authentication
-let fetchOptions = {
-  method: "POST",
-  headers: headers
-};
-
 let body = {
   text: "something"
+};
+
+let fetchOptions = {
+  method: "POST",
+  headers: headers,
+  body: body
 };
 
 fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
