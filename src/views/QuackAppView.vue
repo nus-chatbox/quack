@@ -31,9 +31,7 @@
 
       <!-- Main Body -->
       <div class="layout-view column">
-        <q-pull-to-refresh :handler="refreshChatGroupList" class="group-list-vert">
-          <chat-group-list></chat-group-list>
-        </q-pull-to-refresh>
+        <chat-group-list class="group-list-vert"></chat-group-list>
         <div class="text-center main-action-margin add-button-vert">
           <q-btn big round color="primary" @click="$refs.modalWrapper.$refs.modal.open()" icon="add" />
         </div>
@@ -46,7 +44,7 @@
 </template>
 
 <script>
-import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QPullToRefresh, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
+import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
 import GroupCreationModal from '@/components/GroupCreationModal';
 
@@ -62,7 +60,6 @@ export default {
     QCard,
     ChatGroupList,
     QFixedPosition,
-    QPullToRefresh,
     QList,
     QItemSeparator,
     QToggle,
@@ -75,11 +72,6 @@ export default {
     };
   },
   methods: {
-    refreshChatGroupList(done) {
-      setTimeout(() => {
-        done();
-      }, 1000);
-    },
     logout() {
       this.$store.dispatch('logout')
       .then(
