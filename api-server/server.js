@@ -184,7 +184,7 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
 
   if (_.isNaN(latitude) || _.isNaN(longitude)) {
     res.json({
-      status: 'error'
+      status: 'error (invalid geolocation)'
     });
     return;
   }
@@ -242,7 +242,7 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
 
   if (_.isNaN(roomId)) {
     res.json({
-      status: 'error'
+      status: 'error (invalid room id)'
     });
     return;
   }
