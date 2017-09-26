@@ -5,11 +5,18 @@
 export default {
   state: {
     fbToken: window.localStorage.getItem('fbToken'),
-    jwtToken: window.localStorage.getItem('jwtToken')
+    jwtToken: window.localStorage.getItem('jwtToken'),
+    latitude: null,
+    longitude: null,
+    accuracy: null,
+    lastUpdated: new Date()
   },
   getters: {
     isLoggedIn(state) {
       return (state.fbToken !== null) && (state.jwtToken !== null);
+    },
+    hasGeolocation(state) {
+      return (state.latitude !== null) && (state.longitude !== null);
     }
   },
   mutations: {
@@ -24,6 +31,16 @@ export default {
       state.jwtToken = null;
       window.localStorage.removeItem('fbToken');
       window.localStorage.removeItem('jwtToken');
+    },
+    updateLocation(state, payload) {
+      state.latitude = payload.coords.latitude;
+      state.longitude = payload.coords.longitude;
+      state.accuracy = payload.coords.accuracy;
+      state.lastUpdated = new Date(payload.timestamp);
+    },
+    updateJwt(state, payload) {
+      state.jwtToken = payload.jwtToken;
+      window.localStorage.setItem('jwtToken', payload.jwtToken);
     }
   },
   actions: {
@@ -59,6 +76,44 @@ export default {
         },
         body: JSON.stringify({
           fbToken: payload.authResponse.accessToken
+        })
+      }).then((response) => {
+        return response.json();
+      });
+    },
+    refreshLocation({ dispatch, commit }) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      };
+      return new Promise((resolve, reject) => {
+        if (window.navigator.geolocation) {
+          return window.navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        } else {
+          reject('Geolocation is not supported in this browser');
+        }
+      }).then((position) => {
+        commit('updateLocation', position);
+        return dispatch('updateServer', {
+          position
+        });
+      }).then((serverResponse) => {
+        console.log(serverResponse);
+        // commit('updateJwt', serverResponse);
+      }).catch((err) => {
+        console.error(err);
+      });
+    },
+    updateServer({ commit }, payload) {
+      return fetch(window.apiUrl + '/user', {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          position: payload
         })
       }).then((response) => {
         return response.json();
