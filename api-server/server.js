@@ -176,6 +176,38 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   });
 });
 
+app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+  const ownerId = req.user.id;
+  const latitude = Number(req.user.latitude);
+  const longitude = Number(req.user.longitude);
+  const title = req.body.title;
+
+  if (_.isNaN(latitude) || _.isNaN(longitude)) {
+    res.json({
+      status: 'error (invalid geolocation)'
+    });
+    return;
+  }
+
+  const roomPromise = Room.create({
+    ownerId,
+    latitude,
+    longitude,
+    title
+  });
+
+  roomPromise.then((room) => {
+    res.json({
+      status: 'success',
+      room
+    });
+  }).catch(() => {
+    res.json({
+      status: 'error'
+    });
+  });
+});
+
 app.get('/subscriptions', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const userId = req.user.id;
   const userSubscriptionPromise = User.query().eager('subscriptions').where('id', userId);
@@ -210,7 +242,7 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
 
   if (_.isNaN(roomId)) {
     res.json({
-      status: 'error'
+      status: 'error (invalid room id)'
     });
     return;
   }

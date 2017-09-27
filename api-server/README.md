@@ -62,6 +62,34 @@ fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
 });
 ```
 
+### Create a new room
+```
+// Requires JWT authentication
+let body = {
+  title: "My first room"
+};
+
+let fetchOptions = {
+  method: "POST",
+  headers: headers,
+  body: body
+};
+
+fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
+  // Example response
+  {
+    "status": "success",
+    "room": {
+        "ownerId": 7,
+        "title": "My Second Room!",
+        "latitude": 123.15,
+        "longitude": 0,
+        "id": 4
+    }
+  }
+});
+```
+
 ### Get currently subscribed rooms
 ```
 // Requires JWT authentication
@@ -135,13 +163,14 @@ fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
 
 ```
 // Requires JWT authentication
-let fetchOptions = {
-  method: "POST",
-  headers: headers
-};
-
 let body = {
   text: "something"
+};
+
+let fetchOptions = {
+  method: "POST",
+  headers: headers,
+  body: body
 };
 
 fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
