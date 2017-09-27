@@ -30,7 +30,7 @@
             <q-btn flat @click="$refs.shareModal.open(); $refs.popover.close();" class="full-width sidebarButton">Invite Friend</q-btn>
             </tr>
             <tr>
-            <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
+            <q-btn flat :disable="reported"  @click="report()" class="full-width sidebarButton">Report Chat</q-btn>
             </tr>
           </table>
         </q-popover>
@@ -148,6 +148,21 @@ export default {
     typeTitle() {
       document.getElementById('title').classList.toggle('hidden');
       document.getElementById('title2').classList.toggle('hidden');
+    },
+    report() {
+      this.reported = true;
+      const alert = Alert.create({
+        color: 'positive',
+        icon: 'security',
+        html: 'Thank you for the report. Our team will review your report.',
+        enter: 'bounceInDown',
+        leave: 'bounceOutUp',
+        position: 'top-center',
+        dismissible: true
+      });
+      window.setTimeout(() => {
+        alert.dismiss();
+      }, 5000);
     }
   },
   props: ['roomId'],
@@ -155,6 +170,7 @@ export default {
     return {
       anonymous: true,
       title: 'Brunch this Weekend?',
+      reported: false,
       message: '',
       messages: [
         {
