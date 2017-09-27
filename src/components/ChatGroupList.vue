@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     nearbyRooms() {
-      return this.$store.state.nearbyRooms;
+      return this.$store.state.chat.nearbyRooms;
     }
   },
   methods: {
