@@ -1,5 +1,10 @@
 <template>
   <q-layout>
+    <q-modal ref="shareModal" :position="bottom" :content-css="{padding: '20px'}">
+      <h4>Share Quack on</h4>
+      <router-view></router-view>
+      <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
+    </q-modal>
     <q-toolbar class="fixed-top" slot="header">
         <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
       <q-toolbar-title class="center-username">
@@ -13,7 +18,7 @@
             <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
             </tr>
             <tr>
-            <q-btn flat class="full-width sidebarButton">Invite Friend</q-btn>
+            <router-link to="/chat/share"><q-btn flat @click="$refs.shareModal.open(); $refs.popover.close()" class="full-width sidebarButton">Invite Friend</q-btn></router-link>
             </tr>
             <tr>
             <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
@@ -75,7 +80,8 @@
 <script>
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert } from 'quasar-framework';
+
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QModal, QModalLayout } from 'quasar-framework';
 
 export default {
   components: {
@@ -92,7 +98,9 @@ export default {
     QItem,
     QItemMain,
     QOptionGroup,
-    Alert
+    Alert,
+    QModal,
+    QModalLayout
   },
   methods: {
     exitChat() {
@@ -251,4 +259,6 @@ message-box-bottom-margin = message-input-height - 25px
   border-left: 15px solid transparent
   border-right: 15px solid transparent
   border-bottom: 15px solid rgb(52,73,94)
+#closeModal
+  width: 100%
 </style>
