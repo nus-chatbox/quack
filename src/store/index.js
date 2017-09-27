@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import userModule from './user/index';
 import chatModule from './chat/index';
+import chatSocketPlugin from './chat/socket';
 
 Vue.use(Vuex);
 
@@ -14,5 +15,8 @@ export default new Vuex.Store({
   modules: {
     user: userModule,
     chat: chatModule
-  }
+  },
+  plugins: [
+    chatSocketPlugin
+  ]
 });

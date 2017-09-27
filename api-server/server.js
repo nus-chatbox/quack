@@ -182,8 +182,11 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
 /******************************* Rooms ********************************/
 
 io.on('connect', (socket) => {
-  socket.on('room', (room) => {
+  socket.on('subscribe', (room) => {
     socket.join(room);
+  });
+  socket.on('unsubscribe', (room) => {
+    socket.leave(room);
   });
 });
 
