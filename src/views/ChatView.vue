@@ -1,6 +1,6 @@
 <template>
   <q-layout>
-    <q-modal ref="shareModal" :position="bottom" :content-css="{padding: '20px'}">
+    <q-modal ref="shareModal" :content-css="{padding: '20px'}">
       <h4>Share Quack on</h4>
       <router-view></router-view>
       <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
