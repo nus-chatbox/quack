@@ -10,7 +10,7 @@
       <q-toolbar-title class="center-username">
         Brunch this weekend?
       </q-toolbar-title>
-      <q-btn flat icon="settings">
+      <q-btn flat icon="more vert">
         <q-popover ref="popover">
           <div id="triangle"></div>
           <table class="q-table" id="sidebarTable">
