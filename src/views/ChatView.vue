@@ -16,8 +16,8 @@
           class="hidden"
         >
         <q-input max-length="25" v-model="title" />
-        <q-btn @click="typeTitle()"> Done </q-btn>
         </q-field>
+        <q-btn @click="typeTitle()" class="full-width hidden" id="editTitleDone"> Done </q-btn>
       </q-toolbar-title>
       <q-btn flat icon="more vert">
         <q-popover ref="popover">
@@ -148,6 +148,7 @@ export default {
     typeTitle() {
       document.getElementById('title').classList.toggle('hidden');
       document.getElementById('title2').classList.toggle('hidden');
+      document.getElementById('editTitleDone').classList.toggle('hidden');
     },
     report() {
       this.reported = true;
