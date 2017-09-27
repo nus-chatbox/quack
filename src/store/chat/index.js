@@ -14,8 +14,10 @@ export default {
   mutations: {
     enterRoom(state, payload) {
       state.currentRoom = payload.roomId;
+      window.apiSocket.emit('subscribe', payload.roomId);
     },
     leaveRoom(state) {
+      window.apiSocket.emit('unsubscribe', state.currentRoom);
       state.currentRoom = null;
     },
     updateNearbyRooms(state, payload) {
@@ -28,7 +30,9 @@ export default {
     },
     patchMessages(state, payload) {
       payload.messages.forEach((message) => {
-        state.roomIdToMessages[message.roomId] = [];
+        if (state.roomIdToMessages[message.roomId] === undefined) {
+          state.roomIdToMessages[message.roomId] = [];
+        }
         state.roomIdToMessages[message.roomId].push(message);
       });
     }
@@ -43,11 +47,11 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchNearbyRooms({ state }) {
+    fetchNearbyRooms({ rootState }) {
       return fetch(window.apiUrl + '/rooms', {
         method: 'GET',
         headers: {
-          Authorization: `bearer ${state.jwtToken}`,
+          Authorization: `bearer ${rootState.user.jwtToken}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         }
@@ -65,11 +69,11 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchMessages({ state }) {
+    fetchMessages({ state, rootState }) {
       return fetch(window.apiUrl + '/rooms/' + state.currentRoom + '/messages', {
         method: 'GET',
         headers: {
-          Authorization: `bearer ${state.jwtToken}`,
+          Authorization: `bearer ${rootState.user.jwtToken}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         }

@@ -6,7 +6,6 @@ import QuackAppView from '@/views/QuackAppView';
 import LoginView from '@/views/LoginView';
 import ChatView from '@/views/ChatView';
 import NotFoundView from '@/views/NotFoundView';
-import Share from '@/views/Share';
 
 Vue.use(VueRouter);
 
@@ -28,12 +27,6 @@ const Router = new VueRouter({
     {
       path: '/chat/:roomId',
       name: 'ChatView',
-      children: [
-        {
-          path: '',
-          component: Share
-        }
-      ],
       component: ChatView,
       props: true,
       meta: { requiresAuth: true }

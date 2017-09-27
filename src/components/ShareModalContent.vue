@@ -1,5 +1,8 @@
 <template>
-    <social-sharing url="https://www.quack.press/" inline-template>
+    <social-sharing title="Quack"
+                    description="Progressive geolocation based chat app"
+                    quote="Quack is a geolocation based progressive web chat app."
+                    inline-template>
     <table style="cursor: pointer">
         <tr>
             <network network="facebook">
@@ -36,3 +39,18 @@
     </table>
     </social-sharing>
 </template>
+
+<script>
+export default {
+  components: {
+  },
+  computed: {
+  },
+  methods: {
+  }
+};
+</script>
+
+<style scoped lang="stylus">
+
+</style>

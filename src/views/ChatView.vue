@@ -2,7 +2,7 @@
   <q-layout>
     <q-modal ref="shareModal" :content-css="{padding: '20px'}">
       <h4>Share Quack on</h4>
-      <router-view></router-view>
+      <share-modal-content></share-modal-content>
       <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
     </q-modal>
     <q-toolbar class="fixed-top" slot="header">
@@ -82,9 +82,11 @@ import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
 
 import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QModal, QModalLayout } from 'quasar-framework';
+import ShareModalContent from '@/components/ShareModalContent';
 
 export default {
   components: {
+    Alert,
     QChatMessage,
     QSpinnerDots,
     QLayout,
@@ -98,9 +100,9 @@ export default {
     QItem,
     QItemMain,
     QOptionGroup,
-    Alert,
     QModal,
-    QModalLayout
+    QModalLayout,
+    ShareModalContent
   },
   methods: {
     exitChat() {
