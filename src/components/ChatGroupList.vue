@@ -22,27 +22,25 @@ export default {
   },
   methods: {
     refreshChatGroupList(done) {
-      this.$store.dispatch('refreshLocation').then(() => {
+      this.$store.dispatch('refreshLocation').then(() =>
         // Need to update rooms
-        return this.$store.dispatch('getNearbyRooms');
-      }).then(() => {
+         this.$store.dispatch('getNearbyRooms')).then(() => {
         // Throw a toast here?
-        done();
-      }).catch(() => {
+           done();
+         }).catch(() => {
         // Do something on error?
-      });
+         });
     }
   },
   created() {
-    let geolocationPromise = this.$store.getters.hasGeolocation ? Promise.resolve() : this.$store.dispatch('refreshLocation');
-    geolocationPromise.then(() => {
+    const geolocationPromise = this.$store.getters.hasGeolocation ? Promise.resolve() : this.$store.dispatch('refreshLocation');
+    geolocationPromise.then(() =>
       // Show a refreshing symbol here?
-      return this.$store.dispatch('getNearbyRooms');
-    }).then(() => {
+       this.$store.dispatch('getNearbyRooms')).then(() => {
       // Stop showing refreshing symbol?
-    }).catch(() => {
+       }).catch(() => {
       // Do something on error?
-    });
+       });
   }
 };
 </script>
