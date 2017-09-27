@@ -80,6 +80,9 @@ export default {
       }).then((response) => {
         return response.json();
       });
+    },
+    enterRoom({ commit }, payload) {
+      commit('enterRoom', payload);
     }
   }
 };
