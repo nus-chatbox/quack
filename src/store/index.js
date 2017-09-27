@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import userModule from './user/index';
+import chatModule from './chat/index';
 
 Vue.use(Vuex);
 
@@ -41,7 +42,8 @@ const actions = {
 
 export default new Vuex.Store({
   modules: {
-    user: userModule
+    user: userModule,
+    chat: chatModule
   },
   state,
   mutations,
