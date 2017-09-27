@@ -30,7 +30,7 @@ const Router = new VueRouter({
       name: 'ChatView',
       children: [
         {
-          path: 'share',
+          path: '',
           component: Share
         }
       ],

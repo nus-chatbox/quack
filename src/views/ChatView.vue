@@ -6,7 +6,7 @@
       <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
     </q-modal>
     <q-toolbar class="fixed-top" slot="header">
-        <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
+      <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
       <q-toolbar-title class="center-username">
         Brunch this weekend?
       </q-toolbar-title>
@@ -18,7 +18,7 @@
             <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
             </tr>
             <tr>
-            <router-link to="/chat/share"><q-btn flat @click="$refs.shareModal.open(); $refs.popover.close()" class="full-width sidebarButton">Invite Friend</q-btn></router-link>
+            <q-btn flat @click="$refs.shareModal.open(); $refs.popover.close();" class="full-width sidebarButton">Invite Friend</q-btn>
             </tr>
             <tr>
             <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
