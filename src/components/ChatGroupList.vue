@@ -17,32 +17,24 @@ export default {
   },
   computed: {
     nearbyRooms() {
-      return this.$store.state.nearbyRooms;
+      return this.$store.state.chat.nearbyRooms;
     }
   },
   methods: {
     refreshChatGroupList(done) {
-      this.$store.dispatch('refreshLocation').then(() => {
-        // Need to update rooms
-        return this.$store.dispatch('getNearbyRooms');
-      }).then(() => {
-        // Throw a toast here?
+      this.$store.dispatch('refreshLocation')
+      .then(() => this.$store.dispatch('getNearbyRooms'))
+      .then(() => {
         done();
-      }).catch(() => {
-        // Do something on error?
-      });
+      }).catch(() => {});
     }
   },
   created() {
-    let geolocationPromise = this.$store.getters.hasGeolocation ? Promise.resolve() : this.$store.dispatch('refreshLocation');
-    geolocationPromise.then(() => {
-      // Show a refreshing symbol here?
-      return this.$store.dispatch('getNearbyRooms');
-    }).then(() => {
-      // Stop showing refreshing symbol?
-    }).catch(() => {
-      // Do something on error?
-    });
+    const geolocationPromise = this.$store.getters.hasGeolocation ? Promise.resolve() : this.$store.dispatch('refreshLocation');
+    geolocationPromise
+    .then(() => this.$store.dispatch('getNearbyRooms'))
+    .then(() => {})
+    .catch(() => {});
   }
 };
 </script>
