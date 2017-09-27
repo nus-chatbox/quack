@@ -19,8 +19,10 @@
 </template>
 
 <script>
-import { QModal, QInput, QField, QBtn } from 'quasar-framework';
+import { QModal, QInput, QField, QBtn, Alert } from 'quasar-framework';
 import { required, maxLength } from 'vuelidate/lib/validators';
+import 'quasar-extras/animate/fadeInDown.css';
+import 'quasar-extras/animate/fadeOut.css';
 
 export default {
   components: {
@@ -56,9 +58,55 @@ export default {
   methods: {
     createChatGroup() {
       if (!this.isValidGroupName) {
-        //
+        const alert = Alert.create({
+          color: 'negative',
+          icon: 'warning',
+          html: 'Sorry! This is not a valid group name.',
+          duration: 1000,
+          enter: 'fadeInDown',
+          leave: 'fadeOut',
+          position: 'top-center',
+          id: 'one',
+          dismissible: true
+        });
+        setTimeout(() => {
+          alert.dismiss();
+        }, 2000);
       } else {
-        this.$refs.modal.close();
+        fetch(`${window.apiUrl}/rooms`, {
+          method: 'POST',
+          headers: {
+            Authorization: `bearer ${this.$store.state.user.jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: {
+            title: this.chatGroupName
+          }
+        })
+        .then((response) => {
+          this.$refs.modal.close();
+          return response.json();
+        })
+        .catch((error) => {
+          /* eslint-disable no-console */
+          console.error(error);
+          const alert = Alert.create({
+            color: 'negative',
+            icon: 'warning',
+            html: 'Sorry! Something went wrong with creating the group.',
+            duration: 1000,
+            enter: 'fadeInDown',
+            leave: 'fadeOut',
+            position: 'top-center',
+            id: 'one',
+            dismissible: true
+          });
+          setTimeout(() => {
+            alert.dismiss();
+          }, 2000);
+          return Promise.reject(error);
+        });
       }
     }
   }
