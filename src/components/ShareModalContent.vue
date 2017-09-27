@@ -1,5 +1,8 @@
 <template>
-    <social-sharing inline-template>
+    <social-sharing title="Quack"
+                    description="Progressive geolocation based chat app"
+                    quote="Quack is a geolocation based progressive web chat app."
+                    inline-template>
     <table style="cursor: pointer">
         <tr>
             <network network="facebook">
