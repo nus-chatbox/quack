@@ -8,7 +8,16 @@
     <q-toolbar class="fixed-top" slot="header">
       <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
       <q-toolbar-title class="center-username">
-        Brunch this weekend?
+        <q-btn id="title" @click="typeTitle()"> {{ title }} </q-btn>
+        <q-field
+          icon="edit"
+          :count="25"
+          id="title2"
+          class="hidden"
+        >
+        <q-input max-length="25" v-model="title" />
+        <q-btn @click="typeTitle()"> Done </q-btn>
+        </q-field>
       </q-toolbar-title>
       <q-btn flat icon="more vert">
         <q-popover ref="popover">
@@ -81,7 +90,7 @@
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
 
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QModal, QModalLayout } from 'quasar-framework';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QModal, QModalLayout, QSearch, QField } from 'quasar-framework';
 
 export default {
   components: {
@@ -100,7 +109,9 @@ export default {
     QOptionGroup,
     Alert,
     QModal,
-    QModalLayout
+    QModalLayout,
+    QSearch,
+    QField
   },
   methods: {
     exitChat() {
@@ -133,12 +144,17 @@ export default {
       window.setTimeout(() => {
         alert.dismiss();
       }, 10);
+    },
+    typeTitle() {
+      document.getElementById('title').classList.toggle('hidden');
+      document.getElementById('title2').classList.toggle('hidden');
     }
   },
   props: ['roomId'],
   data() {
     return {
       anonymous: true,
+      title: 'Brunch this Weekend?',
       message: '',
       messages: [
         {
@@ -258,4 +274,9 @@ message-box-bottom-margin = message-input-height - 25px
   border-bottom: 15px solid rgb(52,73,94)
 #closeModal
   width: 100%
+.center-username
+  cursor: pointer
+.hidden
+  display: none
+  overflow:hidden;
 </style>
