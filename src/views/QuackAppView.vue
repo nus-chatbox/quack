@@ -76,9 +76,10 @@ export default {
   },
   methods: {
     refreshChatGroupList(done) {
-      setTimeout(() => {
+      this.$store.dispatch('refreshLocation').then(() => {
+        // Need to update rooms
         done();
-      }, 1000);
+      });
     },
     logout() {
       this.$store.dispatch('logout')

@@ -26,6 +26,29 @@ apiSocket.on('message', function(message) {
 });
 ```
 
+## Users API
+------
+### Patching the user (and refreshing JWT)
+```
+// Requires JWT authentication
+let body = {
+  latitude: latitude,
+  longitude: longitude
+};
+
+let fetchOptions = {
+  method: "PATCH",
+  headers: headers,
+  body: body
+};
+
+fetch(`${apiUrl}/users`, fetchOptions).then((response) => {
+  // Example response
+  {
+    "jwtToken": "..."
+  }
+});
+```
 
 ## Rooms API
 ------

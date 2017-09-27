@@ -36,10 +36,10 @@ class Room extends Model {
           type: 'string'
         },
         latitude: {
-          type: 'string'
+          type: 'number'
         },
         longitude: {
-          type: 'string'
+          type: 'number'
         }
       }
     };
