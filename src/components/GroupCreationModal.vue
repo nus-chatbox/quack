@@ -84,13 +84,12 @@ export default {
             title: this.chatGroupName
           }
         })
-        .then((response) => {
-          this.$refs.modal.close();
-          return response.json();
+        .then(response => response.json())
+        .then((json) => {
+          this.$store.dispatch('enterRoom', { roomId: json.room.id });
+          this.$router.push({ path: `/chat/${json.room.id}` });
         })
-        .catch((error) => {
-          /* eslint-disable no-console */
-          console.error(error);
+        .catch(() => {
           const alert = Alert.create({
             color: 'negative',
             icon: 'warning',
@@ -105,7 +104,6 @@ export default {
           setTimeout(() => {
             alert.dismiss();
           }, 2000);
-          return Promise.reject(error);
         });
       }
     }

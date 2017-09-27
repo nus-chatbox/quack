@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <q-toolbar class="fixed-top" slot="header">
-        <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
+        <q-btn flat icon="keyboard arrow left" @click="exitChat"></q-btn>
       <q-toolbar-title class="center-username">
         Brunch this weekend?
       </q-toolbar-title>
