@@ -126,7 +126,14 @@ app.post('/authenticate', (req, res) => {
     const fbToken = userAndToken[1];
 
     const fbId = user.id;
-    return Promise.all([User.findOrCreate({ facebookId: fbId }), Promise.resolve(fbToken)]);
+    const displayName = user.name;
+    return Promise.all([
+      User.findOrCreate({ 
+        facebookId: fbId,
+        displayName
+      }), 
+      Promise.resolve(fbToken)
+    ]);
   }).then((userAndToken) => {
     const user = userAndToken[0];
     const fbToken = userAndToken[1];
