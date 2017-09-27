@@ -8,7 +8,7 @@
     <q-toolbar class="fixed-top" slot="header">
       <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
       <q-toolbar-title class="center-username">
-        <q-btn id="title" @click="typeTitle()"> {{ title }} </q-btn>
+        <q-btn id="title" class="full-width" @click="typeTitle()"> {{ title }} </q-btn>
         <q-field
           icon="edit"
           :count="25"
