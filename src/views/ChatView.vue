@@ -43,7 +43,7 @@
 
       <q-chat-message
         name="Vladimir"
-        avatar="../assets/logo.png"
+        avatar="/static/img/logo.png"
       >
         <q-spinner-dots size="2rem" />
       </q-chat-message>
@@ -135,6 +135,7 @@ export default {
       }, 10);
     }
   },
+  props: ['roomId'],
   data() {
     return {
       anonymous: true,
@@ -146,57 +147,21 @@ export default {
         {
           name: 'Vladimir',
           text: ['How are you?'],
-          avatar: 'statics/boy-avatar.png',
+          avatar: '/static/img/logo.png',
           stamp: 'Yesterday 13:34'
         },
         {
           name: 'Jane',
           text: ['I\'m good, thank you!', 'And you?'],
           sent: true,
-          textColor: 'white',
-          bgColor: 'black',
-          avatar: 'statics/linux-avatar.png',
+          avatar: '/static/img/logo.png',
           stamp: 'Yesterday at 13:50'
         },
         {
           name: 'Jane',
           text: ['And you?'],
           sent: true,
-          avatar: 'statics/linux-avatar.png',
-          stamp: 'Yesterday at 13:51'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          bgColor: 'amber',
-          textColor: 'white',
-          text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: 'statics/boy-avatar.png',
-          stamp: '13:55'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: 'statics/boy-avatar.png',
-          stamp: 'Yesterday 13:34'
-        },
-        {
-          name: 'Jane',
-          text: ['I\'m good, thank you!', 'And you?'],
-          sent: true,
-          avatar: 'statics/linux-avatar.png',
-          stamp: 'Yesterday at 13:50'
-        },
-        {
-          name: 'Jane',
-          text: ['And you?'],
-          sent: true,
-          avatar: 'statics/linux-avatar.png',
+          avatar: '/static/img/logo.png',
           stamp: 'Yesterday at 13:51'
         },
         {
@@ -205,7 +170,7 @@ export default {
         {
           name: 'Vladimir',
           text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: 'statics/boy-avatar.png',
+          avatar: '/static/img/logo.png',
           stamp: '13:55'
         },
         {
@@ -214,7 +179,39 @@ export default {
         {
           name: 'Vladimir',
           text: ['How are you?'],
-          avatar: 'statics/boy-avatar.png',
+          avatar: '/static/img/logo.png',
+          stamp: 'Yesterday 13:34'
+        },
+        {
+          name: 'Jane',
+          text: ['I\'m good, thank you!', 'And you?'],
+          sent: true,
+          avatar: '/static/img/logo.png',
+          stamp: 'Yesterday at 13:50'
+        },
+        {
+          name: 'Jane',
+          text: ['And you?'],
+          sent: true,
+          avatar: '/static/img/logo.png',
+          stamp: 'Yesterday at 13:51'
+        },
+        {
+          label: 'Sunday, 19th'
+        },
+        {
+          name: 'Vladimir',
+          text: ['Fine. Nice weather today, right?', 'Hmm...'],
+          avatar: '/static/img/logo.png',
+          stamp: '13:55'
+        },
+        {
+          label: 'Sunday, 19th'
+        },
+        {
+          name: 'Vladimir',
+          text: ['How are you?'],
+          avatar: '/static/img/logo.png',
           stamp: 'Yesterday 13:34'
         }
       ]

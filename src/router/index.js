@@ -26,7 +26,7 @@ const Router = new VueRouter({
       meta: { requiresAuth: false }
     },
     {
-      path: '/chat',
+      path: '/chat/:roomId',
       name: 'ChatView',
       children: [
         {
@@ -35,6 +35,7 @@ const Router = new VueRouter({
         }
       ],
       component: ChatView,
+      props: true,
       meta: { requiresAuth: true }
     },
     {
