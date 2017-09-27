@@ -28,7 +28,9 @@ export default {
     },
     patchMessages(state, payload) {
       payload.messages.forEach((message) => {
-        state.roomIdToMessages[message.roomId] = [];
+        if (state.roomIdToMessages[message.roomId] === undefined) {
+          state.roomIdToMessages[message.roomId] = [];
+        }
         state.roomIdToMessages[message.roomId].push(message);
       });
     }
