@@ -23,12 +23,13 @@ export default {
     },
     initializeMessages(state, payload) {
       payload.messages.forEach((message) => {
-        roomIdToMessages[message.roomId] = [];
+        state.roomIdToMessages[message.roomId] = [];
       });
     },
     patchMessages(state, payload) {
       payload.messages.forEach((message) => {
-        roomIdToMessages[message.roomId].push(message);
+        state.roomIdToMessages[message.roomId] = [];
+        state.roomIdToMessages[message.roomId].push(message);
       });
     }
   },
