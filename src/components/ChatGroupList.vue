@@ -35,6 +35,10 @@ export default {
     .then(() => this.$store.dispatch('getNearbyRooms'))
     .then(() => {})
     .catch(() => {});
+
+    this.$store.commit('enterRoom', {
+      roomId: 5
+    });
   }
 };
 </script>

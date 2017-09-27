@@ -14,8 +14,10 @@ export default {
   mutations: {
     enterRoom(state, payload) {
       state.currentRoom = payload.roomId;
+      window.apiSocket.emit('subscribe', payload.roomId);
     },
     leaveRoom(state) {
+      window.apiSocket.emit('unsubscribe', state.currentRoom);
       state.currentRoom = null;
     },
     updateNearbyRooms(state, payload) {

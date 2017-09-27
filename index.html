@@ -39,14 +39,6 @@
 
       window.apiSocket = io.connect(window.apiUrl);
 
-      apiSocket.on('connect', function() {
-         apiSocket.emit('room', '1');
-      });
-
-      apiSocket.on('message', function(message) {
-        console.log(message);
-      });
-
       window.fbAsyncInit = function() {
         FB.init({
           appId      : fbAppId,
