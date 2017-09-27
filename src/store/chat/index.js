@@ -45,11 +45,11 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchNearbyRooms({ state }) {
+    fetchNearbyRooms({ rootState }) {
       return fetch(window.apiUrl + '/rooms', {
         method: 'GET',
         headers: {
-          Authorization: `bearer ${state.jwtToken}`,
+          Authorization: `bearer ${rootState.user.jwtToken}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         }
@@ -67,11 +67,11 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchMessages({ state }) {
+    fetchMessages({ state, rootState }) {
       return fetch(window.apiUrl + '/rooms/' + state.currentRoom + '/messages', {
         method: 'GET',
         headers: {
-          Authorization: `bearer ${state.jwtToken}`,
+          Authorization: `bearer ${rootState.user.jwtToken}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         }
