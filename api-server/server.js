@@ -34,7 +34,7 @@ const io = require('socket.io')(server);
 // Cross-site header configurations
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Access-Control-Allow-Origin, Access-Control-Allow-Methods, Authorization, Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
@@ -145,6 +145,39 @@ app.post('/authenticate', (req, res) => {
   });
 });
 
+/******************************* Users ********************************/
+
+app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+  const id = req.user.id;
+  const updatedUserLatitude = Number(req.body.latitude);
+  const updatedUserLongitude = Number(req.body.longitude);
+
+  if (_.isNaN(updatedUserLatitude) || _.isNaN(updatedUserLongitude)) {
+    res.json({
+      status: 'error (invalid user geolocation)'
+    });
+    return;
+  }
+
+  User.query().patch({
+    latitude: updatedUserLatitude,
+    longitude: updatedUserLongitude
+  }).where('id', id).then((updateCount) => {
+    return User.query().where('id', id);
+  }).then((users) => {
+    const payload = {
+      user: users[0]
+    };
+    const jwtToken = generateUserToken(payload);
+    res.json({
+      jwtToken
+    });
+  }).catch((err) => {
+    res.json({
+      status: err
+    });
+  });
+});
 
 /******************************* Rooms ********************************/
 
@@ -172,6 +205,38 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   nearbyRoomPromise.then((rooms) => {
     res.json({
       rooms
+    });
+  });
+});
+
+app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res) => {
+  const ownerId = req.user.id;
+  const latitude = Number(req.user.latitude);
+  const longitude = Number(req.user.longitude);
+  const title = req.body.title;
+
+  if (_.isNaN(latitude) || _.isNaN(longitude)) {
+    res.json({
+      status: 'error (invalid geolocation)'
+    });
+    return;
+  }
+
+  const roomPromise = Room.create({
+    ownerId,
+    latitude,
+    longitude,
+    title
+  });
+
+  roomPromise.then((room) => {
+    res.json({
+      status: 'success',
+      room
+    });
+  }).catch(() => {
+    res.json({
+      status: 'error'
     });
   });
 });
@@ -210,7 +275,7 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
 
   if (_.isNaN(roomId)) {
     res.json({
-      status: 'error'
+      status: 'error (invalid room id)'
     });
     return;
   }

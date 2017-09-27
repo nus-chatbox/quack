@@ -3,9 +3,6 @@
     <div v-for="room in nearbyRooms">
       <router-link :to="`/chat/${room.id}`"><chat-group></chat-group></router-link>
     </div>
-    <router-link :to="`/chat/1`"><chat-group></chat-group></router-link>
-    <router-link :to="`/chat/1`"><chat-group></chat-group></router-link>
-    <router-link :to="`/chat/1`"><chat-group></chat-group></router-link>
   </q-pull-to-refresh>
 </template>
 
@@ -25,14 +22,27 @@ export default {
   },
   methods: {
     refreshChatGroupList(done) {
-      this.$store.dispatch('getNearbyRooms')
-      .then(() => setTimeout(() => { done(); }, 1000))
-      // Throw a toast here?
-      .catch(() => {});
+      this.$store.dispatch('refreshLocation').then(() => {
+        // Need to update rooms
+        return this.$store.dispatch('getNearbyRooms');
+      }).then(() => {
+        // Throw a toast here?
+        done();
+      }).catch(() => {
+        // Do something on error?
+      });
     }
   },
   created() {
-    this.$store.dispatch('getNearbyRooms');
+    let geolocationPromise = this.$store.getters.hasGeolocation ? Promise.resolve() : this.$store.dispatch('refreshLocation');
+    geolocationPromise.then(() => {
+      // Show a refreshing symbol here?
+      return this.$store.dispatch('getNearbyRooms');
+    }).then(() => {
+      // Stop showing refreshing symbol?
+    }).catch(() => {
+      // Do something on error?
+    });
   }
 };
 </script>

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import loginModule from './login/index';
+import userModule from './user/index';
 
 Vue.use(Vuex);
 
@@ -27,11 +27,7 @@ const actions = {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           Authorization: `bearer ${rootState.login.jwtToken}`
-        },
-        user: JSON.stringify({
-          latitude: 1.3521,
-          longitude: 103.8198
-        })
+        }
       })
       .then(response => response.json())
       .then((json) => {
@@ -45,7 +41,7 @@ const actions = {
 
 export default new Vuex.Store({
   modules: {
-    login: loginModule
+    user: userModule
   },
   state,
   mutations,
