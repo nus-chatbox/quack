@@ -1,10 +1,14 @@
 <template>
     <social-sharing url="https://www.quack.press/" inline-template>
-    <div>
     <table style="cursor: pointer">
         <tr>
             <network network="facebook">
             <i class="fa fa-fw fa-facebook"></i> Facebook
+            </network>
+        </tr>
+        <tr>
+            <network network="telegram">
+            <i class="fa fa-telegram"></i> Telegram
             </network>
         </tr>
         <tr>
@@ -33,11 +37,6 @@
             </network>
         </tr>
         <tr>
-            <network network="vk">
-            <i class="fa fa-vk"></i> VKontakte
-            </network>
-        </tr>
-        <tr>
             <network network="weibo">
             <i class="fa fa-weibo"></i> Weibo
             </network>
@@ -48,6 +47,5 @@
             </network>
         </tr>
     </table>
-    </div>
     </social-sharing>
 </template>
