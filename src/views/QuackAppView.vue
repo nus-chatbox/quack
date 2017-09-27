@@ -47,6 +47,7 @@
 import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
 import GroupCreationModal from '@/components/GroupCreationModal';
+import quackLogo from '../assets/logo.png';
 
 
 export default {
@@ -79,7 +80,7 @@ export default {
     return {
       isAnonymous: false,
       username: 'Donald Duck',
-      profilePicture: '/static/img/logo.png'
+      profilePicture: quackLogo
     };
   },
   methods: {
