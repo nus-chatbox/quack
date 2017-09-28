@@ -10,7 +10,7 @@
         <q-item-main
          :label="name"
          label-lines="1"
-         sublabel="John Doe: Quack with me!"
+         :sublabel="lastMessage"
          sublabel-lines="2"
         />
         <q-item-side right stamp="5 m<br>away" />
@@ -36,7 +36,13 @@ export default {
     QItemMain,
     QItemTile
   },
-  props: ['name']
+  props: ['id', 'name'],
+  computed: {
+    lastMessage() {
+      const message = this.$store.getters.getLatestRoomMessage(this.id);
+      return `${message.owner.displayName} : ${message.text}`;
+    }
+  }
 };
 </script>
 

@@ -14,6 +14,12 @@ export default {
       return (roomId) => {
         return state.roomIdToMessages[roomId];
       };
+    },
+    getLatestRoomMessage(state, getters) {
+      return (roomId) => {
+        const roomMessages = getters.getRoomMessages(roomId);
+        return roomMessages[roomMessages.length - 1];
+      };
     }
   },
   mutations: {
@@ -23,7 +29,13 @@ export default {
 
       const newNearbyRoomIds = payload.rooms.map(nearbyRoom => nearbyRoom.id);
       window.apiSocket.emit('subscribe', newNearbyRoomIds);
-      state.nearbyRooms = payload.rooms;
+
+      const clonedRooms = JSON.parse(JSON.stringify(payload.rooms));
+      clonedRooms.forEach((room) => {
+        Vue.set(state.roomIdToMessages, room.id, [room.messages[0]]);
+        delete room.messages;
+      });
+      state.nearbyRooms = clonedRooms;
     },
     initializeMessages(state, payload) {
       payload.messages.forEach((message) => {
