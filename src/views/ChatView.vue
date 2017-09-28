@@ -29,20 +29,11 @@
           :key="index"
           :label="msg.label"
           :sent="msg.sent"
-          :text-color="msg.textColor"
-          :bg-color="msg.bgColor"
-          :name="msg.name"
-          :avatar="msg.avatar"
-          :text="msg.text"
+          :name="msg.owner.displayName"
+          avatar="/static/img/logo.png"
+          :text="[msg.text]"
           :stamp="msg.stamp"
         />
-
-        <q-chat-message
-          name="Vladimir"
-          avatar="/static/img/logo.png"
-        >
-          <q-spinner-dots size="2rem" />
-        </q-chat-message>
       </div>
       <q-input class="fixed-bottom message-input"
         v-model="message"
@@ -55,18 +46,8 @@
         color="primary"
         :after="[
                   {
-                    icon: 'attach file',
-                    content: false,
-                    handler () {
-                      // do something...
-                    }
-                  },
-                  {
-                    icon: 'photo camera',
-                    content: false,
-                    handler () {
-                      // do something...
-                    }
+                    icon: 'send',
+                    handler: sendMessage
                   }
                 ]"
       />
@@ -101,16 +82,24 @@ export default {
     Alert,
     NotFoundView
   },
-  mounted() {
+  created() {
     Loading.show({
       spinner: QSpinnerCube
     });
-    this.$store.dispatch('enterRoom', { id: this.roomId })
-    .then(() => {
+    Promise.all([
+      this.$store.dispatch('enterRoom', this.roomId),
+      this.$store.dispatch('getMessages', { roomId: this.roomId })
+    ])
+    .then((roomAndMessages) => {
       this.isValidRoom = true;
+      this.roomName = roomAndMessages[0].title;
+      this.$forceUpdate();
       Loading.hide();
     })
-    .catch(() => { this.isValidRoom = false; });
+    .catch(() => {
+      this.isValidRoom = false;
+      Loading.hide();
+    });
   },
   methods: {
     exitChat() {
@@ -144,6 +133,22 @@ export default {
       window.setTimeout(() => {
         alert.dismiss();
       }, 10);
+    },
+    sendMessage() {
+      fetch(`${window.apiUrl}/rooms/${this.roomId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `bearer ${this.$store.state.user.jwtToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: this.message
+        })
+      })
+      .then(() => { this.message = ''; })
+      // eslint-disable-next-line no-console
+      .catch((err) => { console.error(err); });
     }
   },
   props: ['roomId'],
@@ -152,86 +157,12 @@ export default {
       isValidRoom: null,
       anonymous: true,
       message: '',
-      messages: [
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        },
-        {
-          name: 'Jane',
-          text: ['I\'m good, thank you!', 'And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:50'
-        },
-        {
-          name: 'Jane',
-          text: ['And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:51'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: '/static/img/logo.png',
-          stamp: '13:55'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        },
-        {
-          name: 'Jane',
-          text: ['I\'m good, thank you!', 'And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:50'
-        },
-        {
-          name: 'Jane',
-          text: ['And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:51'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: '/static/img/logo.png',
-          stamp: '13:55'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        }
-      ]
+      roomName: ''
     };
   },
   computed: {
-    roomName() {
-      return this.$store.state.chat.currentRoom.title;
+    messages() {
+      return this.$store.getters.getRoomMessages(this.roomId);
     }
   }
 };
