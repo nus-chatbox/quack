@@ -337,6 +337,13 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
     return;
   }
 
+  if (_.isEmpty(text)) {
+    res.json({
+      status: 'error (empty message)'
+    });
+    return;
+  }
+
   const messagePromise = Message.create({
     userId,
     attachmentType: 'text',
