@@ -94,6 +94,8 @@ export default {
       this.roomName = roomAndMessages[0].title;
       this.$forceUpdate();
       Loading.hide();
+      // eslint-disable-next-line
+      // console.log(this.$refs.messageBox.$el);
       this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
     })
     .catch((err) => {
@@ -109,7 +111,7 @@ export default {
     });
   },
   updated() {
-    this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
+    // this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
   },
   methods: {
     exitChat() {
