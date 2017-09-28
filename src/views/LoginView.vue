@@ -4,7 +4,7 @@
       <div class="layout-padding text-center">
         <img class="responsive" src="../assets/logo.png" />
         <p class="caption"><h2><strong>Quack</strong></h2></p>
-        <p class="caption"><h5>Make chats social again.</h5></p>
+        <p class="caption"><h5>Friends Everywhere.</h5></p>
         <div class="layout-padding">
           <q-btn class="fb-button" icon-right="lock" big v-ripple color="#3B5998" @click="login()">
             Sign in with Facebook
