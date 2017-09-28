@@ -106,7 +106,7 @@ export default {
         }
       }).then((position) => {
         commit('updateLocation', position);
-        return dispatch('updateServer');
+        return dispatch('patchLocation');
       }).then((serverResponse) => {
         commit('updateJwt', serverResponse);
         return Promise.resolve(serverResponse);
@@ -115,7 +115,28 @@ export default {
         return Promise.reject(err);
       });
     },
-    updateServer({ state }) {
+    patchUsername({ commit, state }, payload) {
+      return fetch(window.apiUrl + '/users', {
+        method: 'PATCH',
+        headers: {
+          Authorization: `bearer ${state.jwtToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          displayName: payload.displayName
+        })
+      }).then((response) => {
+        return response.json();
+      }).then((jsonResponse) => {
+        commit('updateJwt', jsonResponse);
+        return Promise.resolve(jsonResponse);
+      }).catch((err) => {
+        console.error(err);
+        return Promise.reject(err);
+      });
+    },
+    patchLocation({ state }) {
       return fetch(window.apiUrl + '/users', {
         method: 'PATCH',
         headers: {
