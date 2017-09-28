@@ -92,9 +92,8 @@ export default {
     .then((roomAndMessages) => {
       this.isValidRoom = true;
       this.roomName = roomAndMessages[0].title;
-      this.$forceUpdate();
+      this.clientHeight = this.$el.clientHeight;
       Loading.hide();
-      this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
     })
     .catch((err) => {
       // eslint-disable-next-line
@@ -105,11 +104,37 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.clientHeight = this.$el.clientHeight;
+      /* eslint-disable arrow-body-style */
+      this.unwatchMessage = this.$store.watch((state) => {
+        return state.chat.roomIdToMessages[this.roomId];
+      }, () => {
+        const messages = this.$store.state.chat.roomIdToMessages[this.roomId];
+        const lastSpeaker = messages[messages.length - 1].owner.id;
+        const isLastSpeaker = lastSpeaker === this.$store.getters.getUserId;
+        if (isLastSpeaker || this.$refs.messageBox.scrollPercentage > 0.975) {
+          this.scrollToBottom();
+        }
+      }, {
+        deep: true
+      });
     });
   },
   updated() {
-    this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
+    this.$nextTick(() => {
+      if (!this.hasDoneFirstScroll) {
+        if (this.debounceId !== null) {
+          clearTimeout(this.debounceId);
+        }
+        this.debounceId = setTimeout(() => {
+          this.scrollToBottom();
+          this.hasDoneFirstScroll = true;
+          this.debounceId = null;
+        }, 200);
+      }
+    });
+  },
+  beforeDestroy() {
+    this.unwatchMessage();
   },
   methods: {
     exitChat() {
@@ -134,6 +159,12 @@ export default {
     },
     handleResize() {
       this.clientHeight = this.$el.clientHeight;
+      if (this.$refs.messageBox.scrollPercentage > 0.975) {
+        this.scrollToBottom();
+      }
+    },
+    scrollToBottom() {
+      this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.scrollHeight, 1);
     }
   },
   props: ['roomId'],
@@ -144,7 +175,10 @@ export default {
       message: '',
       roomName: '',
       userId: this.$store.getters.getUserId,
-      clientHeight: 0
+      clientHeight: 0,
+      unwatchMessage: null,
+      hasDoneFirstScroll: false,
+      debounceId: null
     };
   },
   computed: {
