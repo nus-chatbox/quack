@@ -3,7 +3,7 @@
     <q-layout class="bg-image">
       <q-modal ref="shareModal" :content-css="{padding: '20px'}">
         <h4>Share Quack on</h4>
-        <share-modal-content></share-modal-content>
+        <share-modal-content :url="`/chat/${this.roomId}`"></share-modal-content>
         <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
       </q-modal>
       <q-toolbar class="fixed-top" slot="header">
