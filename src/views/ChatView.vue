@@ -1,6 +1,6 @@
 <template>
   <div v-if="isValidRoom === null || isValidRoom">
-    <q-layout>
+    <q-layout class="bg-image">
       <q-toolbar class="fixed-top" slot="header">
           <q-btn flat icon="keyboard arrow left" @click="exitChat"></q-btn>
         <q-toolbar-title class="center-username">
@@ -185,6 +185,10 @@ message-box-bottom-margin = message-input-height - 25px
 .message-box
   margin-top: message-box-top-margin
   margin-bottom: message-box-bottom-margin
+
+.bg-image
+  background-image: url('/static/img/bg.png');
+  background-size: cover
 
 #sidebarTable
   border: 10px solid rgb(52,73,94)
