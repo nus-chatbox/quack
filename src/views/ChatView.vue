@@ -36,7 +36,7 @@
         />
       </div>
       <q-input class="fixed-bottom message-input"
-        v-model="message"
+        v-model.trim="message"
         type="textarea"
         placeholder="Enter your message"
         :min-rows="1"
