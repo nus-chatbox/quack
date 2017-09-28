@@ -17,6 +17,7 @@
     "quasar-framework": "^0.14.3",
     "socket.io": "^2.0.3",
     "vue": "~2.3.0",
+    "vue-resize": "^0.4.2",
     "vue-router": "^2.3.1",
     "vue-social-sharing": "^2.2.5",
     "vuelidate": "^0.5.0",

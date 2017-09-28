@@ -13,18 +13,21 @@
         </q-toolbar-title>
         <q-btn flat icon="share" @click="$refs.shareModal.open();"></q-btn>
       </q-toolbar>
-      <div class="layout-padding message-box">
-        <q-chat-message
-          v-for="(msg, index) in messages"
-          :key="index"
-          :label="msg.label"
-          :sent="msg.userId === userId"
-          :name="msg.owner.displayName"
-          avatar="/static/img/logo.png"
-          :text="[msg.text]"
-          :stamp="msg.stamp"
-        />
-      </div>
+      <resize-observer @notify="handleResize" />
+      <q-scroll-area :style="{ height: (clientHeight - 10) + 'px' }" ref="messageBox">
+        <div class="layout-padding message-box">
+          <q-chat-message
+            v-for="(msg, index) in messages"
+            :key="index"
+            :label="msg.label"
+            :sent="msg.userId === userId"
+            :name="msg.owner.displayName"
+            avatar="/static/img/logo.png"
+            :text="[msg.text]"
+            :stamp="msg.stamp"
+          />
+        </div>
+      </q-scroll-area>
       <q-input class="fixed-bottom message-input"
         v-model.trim="message"
         type="textarea"
@@ -52,7 +55,7 @@
 <script>
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, Loading, QSpinnerCube, QModal, QModalLayout } from 'quasar-framework';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, Loading, QSpinnerCube, QModal, QModalLayout, QScrollArea } from 'quasar-framework';
 import NotFoundView from '@/views/NotFoundView';
 import ShareModalContent from '@/components/ShareModalContent';
 
@@ -75,7 +78,8 @@ export default {
     NotFoundView,
     QModal,
     QModalLayout,
-    ShareModalContent
+    ShareModalContent,
+    QScrollArea
   },
   created() {
     Loading.show({
@@ -90,11 +94,22 @@ export default {
       this.roomName = roomAndMessages[0].title;
       this.$forceUpdate();
       Loading.hide();
+      this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
     })
-    .catch(() => {
+    .catch((err) => {
+      // eslint-disable-next-line
+      console.error(err);
       this.isValidRoom = false;
       Loading.hide();
     });
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.clientHeight = this.$el.clientHeight;
+    });
+  },
+  updated() {
+    this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.$el.scrollHeight, 1);
   },
   methods: {
     exitChat() {
@@ -116,6 +131,9 @@ export default {
       .then(() => { this.message = ''; })
       // eslint-disable-next-line no-console
       .catch((err) => { console.error(err); });
+    },
+    handleResize() {
+      this.clientHeight = this.$el.clientHeight;
     }
   },
   props: ['roomId'],
@@ -125,7 +143,8 @@ export default {
       anonymous: true,
       message: '',
       roomName: '',
-      userId: this.$store.getters.getUserId
+      userId: this.$store.getters.getUserId,
+      clientHeight: 0
     };
   },
   computed: {
@@ -137,8 +156,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-message-input-height = 45px
-message-box-top-margin = message-input-height - 15px
+message-input-height = 35px
+message-box-top-margin = message-input-height - 10px
 message-box-bottom-margin = message-input-height - 25px
 
 .message-input

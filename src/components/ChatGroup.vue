@@ -40,7 +40,10 @@ export default {
   computed: {
     lastMessage() {
       const message = this.$store.getters.getLatestRoomMessage(this.id);
-      return (message === '') ? '' : `${message.owner.displayName} : ${message.text}`;
+      if (message) {
+        return `${message.owner.displayName} : ${message.text}`;
+      }
+      return '';
     }
   }
 };

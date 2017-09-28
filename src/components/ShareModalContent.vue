@@ -42,7 +42,9 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: ['url']
+};
 </script>
 
 <style scoped lang="stylus">
