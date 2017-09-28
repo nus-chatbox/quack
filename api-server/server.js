@@ -219,6 +219,14 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   });
 });
 
+app.get('/rooms/:roomId', (req, res) => {
+  Room.query().where('id', req.params.roomId).then((rooms) => {
+    res.json({
+      rooms
+    });
+  });
+});
+
 app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const ownerId = req.user.id;
   const latitude = Number(req.user.latitude);
@@ -271,7 +279,15 @@ app.get('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fal
     return;
   }
 
-  Message.query().where('roomId', roomId).then((messages) => {
+  Message.query().eager('owner').where('roomId', roomId).then((messages) => {
+    messages.forEach((message) => {
+      message.owner = {
+        id: message.owner.id,
+        displayName: message.owner.displayName,
+        latitude: message.owner.latitude,
+        longitude: message.owner.longitude
+      };
+    });
     res.json({
       messages
     });
