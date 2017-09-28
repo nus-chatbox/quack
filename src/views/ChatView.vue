@@ -1,18 +1,19 @@
 <template>
-  <q-layout>
-    <q-modal ref="shareModal" :content-css="{padding: '20px'}">
-      <h4>Share Quack on</h4>
-      <share-modal-content></share-modal-content>
-      <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
-    </q-modal>
-    <q-toolbar class="fixed-top" slot="header">
-      <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
-      <q-toolbar-title class="center-username">
-        Brunch this weekend?
-      </q-toolbar-title>
-      <q-btn flat icon="more vert">
-        <q-popover ref="popover">
-          <div id="triangle"></div>
+  <div v-if="isValidRoom === null || isValidRoom">
+    <q-layout class="bg-image">
+      <q-modal ref="shareModal" :content-css="{padding: '20px'}">
+        <h4>Share Quack on</h4>
+        <share-modal-content></share-modal-content>
+        <q-btn id="closeModal" color="primary" @click="$refs.shareModal.close()">Close</q-btn>
+      </q-modal>
+      <q-toolbar class="fixed-top" slot="header">
+          <q-btn flat icon="keyboard arrow left" @click="exitChat()"></q-btn>
+        <q-toolbar-title class="center-username">
+          {{roomName}}
+        </q-toolbar-title>
+        <q-btn flat icon="settings">
+          <q-popover ref="popover">
+            <div id="triangle"></div>
           <table class="q-table" id="sidebarTable">
             <tr>
             <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
@@ -24,69 +25,54 @@
             <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
             </tr>
           </table>
-        </q-popover>
-      </q-btn>
-    </q-toolbar>
-    <div class="layout-padding message-box">
-      <q-chat-message
-        v-for="(msg, index) in messages"
-        :key="index"
-        :label="msg.label"
-        :sent="msg.sent"
-        :text-color="msg.textColor"
-        :bg-color="msg.bgColor"
-        :name="msg.name"
-        :avatar="msg.avatar"
-        :text="msg.text"
-        :stamp="msg.stamp"
+          </q-popover>
+        </q-btn>
+      </q-toolbar>
+      <div class="layout-padding message-box">
+        <q-chat-message
+          v-for="(msg, index) in messages"
+          :key="index"
+          :label="msg.label"
+          :sent="msg.userId === userId"
+          :name="msg.owner.displayName"
+          avatar="/static/img/logo.png"
+          :text="[msg.text]"
+          :stamp="msg.stamp"
+        />
+      </div>
+      <q-input class="fixed-bottom message-input"
+        v-model="message"
+        type="textarea"
+        placeholder="Enter your message"
+        :min-rows="1"
+        clearable
+        inverted
+        align="center"
+        color="primary"
+        @keydown.enter="sendMessage"
+        :after="[
+                  {
+                    icon: 'send',
+                    handler: sendMessage
+                  }
+                ]"
       />
-
-      <q-chat-message
-        name="Vladimir"
-        avatar="/static/img/logo.png"
-      >
-        <q-spinner-dots size="2rem" />
-      </q-chat-message>
-    </div>
-    <q-input class="fixed-bottom message-input"
-      v-model="message"
-      type="textarea"
-      placeholder="Enter your message"
-      :min-rows="1"
-      clearable
-      inverted
-      align="center"
-      color="primary"
-      :after="[
-                {
-                  icon: 'attach file',
-                  content: false,
-                  handler () {
-                    // do something...
-                  }
-                },
-                {
-                  icon: 'photo camera',
-                  content: false,
-                  handler () {
-                    // do something...
-                  }
-                }
-              ]"
-    />
-  </q-layout>
+    </q-layout>
+  </div>
+  <div v-else>
+    <not-found-view />
+  </div>
 </template>
 
 <script>
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
-
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, QModal, QModalLayout } from 'quasar-framework';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, Loading, QSpinnerCube, QModal, QModalLayout } from 'quasar-framework';
+import NotFoundView from '@/views/NotFoundView';
 import ShareModalContent from '@/components/ShareModalContent';
 
 export default {
   components: {
-    Alert,
     QChatMessage,
     QSpinnerDots,
     QLayout,
@@ -100,12 +86,34 @@ export default {
     QItem,
     QItemMain,
     QOptionGroup,
+    Alert,
+    NotFoundView,
     QModal,
     QModalLayout,
     ShareModalContent
   },
+  created() {
+    Loading.show({
+      spinner: QSpinnerCube
+    });
+    Promise.all([
+      this.$store.dispatch('enterRoom', this.roomId),
+      this.$store.dispatch('getMessages', { roomId: this.roomId })
+    ])
+    .then((roomAndMessages) => {
+      this.isValidRoom = true;
+      this.roomName = roomAndMessages[0].title;
+      this.$forceUpdate();
+      Loading.hide();
+    })
+    .catch(() => {
+      this.isValidRoom = false;
+      Loading.hide();
+    });
+  },
   methods: {
     exitChat() {
+      this.$store.dispatch('leaveRoom');
       this.$router.push({ path: '/' });
     },
     toggleAnom(anonymous) {
@@ -135,89 +143,38 @@ export default {
       window.setTimeout(() => {
         alert.dismiss();
       }, 10);
+    },
+    sendMessage() {
+      fetch(`${window.apiUrl}/rooms/${this.roomId}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `bearer ${this.$store.state.user.jwtToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: this.message
+        })
+      })
+      .then(() => { this.message = ''; })
+      // eslint-disable-next-line no-console
+      .catch((err) => { console.error(err); });
     }
   },
   props: ['roomId'],
   data() {
     return {
+      isValidRoom: null,
       anonymous: true,
       message: '',
-      messages: [
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        },
-        {
-          name: 'Jane',
-          text: ['I\'m good, thank you!', 'And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:50'
-        },
-        {
-          name: 'Jane',
-          text: ['And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:51'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: '/static/img/logo.png',
-          stamp: '13:55'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        },
-        {
-          name: 'Jane',
-          text: ['I\'m good, thank you!', 'And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:50'
-        },
-        {
-          name: 'Jane',
-          text: ['And you?'],
-          sent: true,
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday at 13:51'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['Fine. Nice weather today, right?', 'Hmm...'],
-          avatar: '/static/img/logo.png',
-          stamp: '13:55'
-        },
-        {
-          label: 'Sunday, 19th'
-        },
-        {
-          name: 'Vladimir',
-          text: ['How are you?'],
-          avatar: '/static/img/logo.png',
-          stamp: 'Yesterday 13:34'
-        }
-      ]
+      roomName: '',
+      userId: this.$store.getters.getUserId
     };
+  },
+  computed: {
+    messages() {
+      return this.$store.getters.getRoomMessages(this.roomId);
+    }
   }
 };
 </script>
@@ -237,6 +194,10 @@ message-box-bottom-margin = message-input-height - 25px
 .message-box
   margin-top: message-box-top-margin
   margin-bottom: message-box-bottom-margin
+
+.bg-image
+  background-image: url('/static/img/bg.png');
+  background-size: cover
 
 #sidebarTable
   border: 10px solid rgb(52,73,94)

@@ -1,7 +1,8 @@
 <template>
   <q-pull-to-refresh :handler="refreshChatGroupList" class="group-list-vert">
     <div v-for="room in nearbyRooms">
-      <router-link :to="`/chat/${room.id}`"><chat-group></chat-group></router-link>
+      <router-link :to="`/chat/${room.id}`">
+        <chat-group :id="room.id" :name="room.title"></chat-group></router-link>
     </div>
   </q-pull-to-refresh>
 </template>

@@ -8,9 +8,9 @@
           </q-item-tile>
         </q-item-side>
         <q-item-main
-         label="Brunch this weekend? Brunch this weekend? Brunch this weekend?"
+         :label="name"
          label-lines="1"
-         sublabel="John Doe: Anyone wants to eat my favourite char kway teow with me on Sunday?"
+         :sublabel="lastMessage"
          sublabel-lines="2"
         />
         <q-item-side right stamp="5 m<br>away" />
@@ -35,6 +35,13 @@ export default {
     QItemSide,
     QItemMain,
     QItemTile
+  },
+  props: ['id', 'name'],
+  computed: {
+    lastMessage() {
+      const message = this.$store.getters.getLatestRoomMessage(this.id);
+      return `${message.owner.displayName} : ${message.text}`;
+    }
   }
 };
 </script>

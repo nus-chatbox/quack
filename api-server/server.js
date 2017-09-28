@@ -126,7 +126,14 @@ app.post('/authenticate', (req, res) => {
     const fbToken = userAndToken[1];
 
     const fbId = user.id;
-    return Promise.all([User.findOrCreate({ facebookId: fbId }), Promise.resolve(fbToken)]);
+    const displayName = user.name;
+    return Promise.all([
+      User.findOrCreate({
+        facebookId: fbId,
+        displayName
+      }),
+      Promise.resolve(fbToken)
+    ]);
   }).then((userAndToken) => {
     const user = userAndToken[0];
     const fbToken = userAndToken[1];
@@ -182,11 +189,15 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
 /******************************* Rooms ********************************/
 
 io.on('connect', (socket) => {
-  socket.on('subscribe', (room) => {
-    socket.join(room);
+  socket.on('subscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.join(room);
+    });
   });
-  socket.on('unsubscribe', (room) => {
-    socket.leave(room);
+  socket.on('unsubscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.leave(room);
+    });
   });
 });
 
@@ -206,6 +217,41 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   })).having('distance', '<=', 1).orderBy('distance', 'asc');
 
   nearbyRoomPromise.then((rooms) => {
+    const roomsWithLastMessagePromise = rooms.map((room) => {
+      return Promise.all([
+        Promise.resolve(room),
+        Message.query().eager('owner').where('roomId', room.id).orderBy('id', 'desc').first()
+      ]);
+    });
+    return Promise.all(roomsWithLastMessagePromise);
+  }).then((pairsOfRoomWithLastMessage) => {
+    let rooms = [];
+    pairsOfRoomWithLastMessage.forEach((pairOfRoomWithLastMessage) => {
+      let room = pairOfRoomWithLastMessage[0];
+      let message = pairOfRoomWithLastMessage[1];
+
+      if (message !== undefined) {
+        const lastMessageOwner = message.owner;
+        message.owner = {
+          id: lastMessageOwner.id,
+          displayName: lastMessageOwner.displayName,
+          latitude: lastMessageOwner.latitude,
+          longitude: lastMessageOwner.longitude
+        };
+      }
+
+      room.messages = message === undefined ? [] : [message];
+      rooms.push(room);
+    });
+
+    res.json({
+      rooms
+    });
+  });
+});
+
+app.get('/rooms/:roomId', (req, res) => {
+  Room.query().where('id', req.params.roomId).then((rooms) => {
     res.json({
       rooms
     });
@@ -264,7 +310,15 @@ app.get('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fal
     return;
   }
 
-  Message.query().where('roomId', roomId).then((messages) => {
+  Message.query().eager('owner').where('roomId', roomId).then((messages) => {
+    messages.forEach((message) => {
+      message.owner = {
+        id: message.owner.id,
+        displayName: message.owner.displayName,
+        latitude: message.owner.latitude,
+        longitude: message.owner.longitude
+      };
+    });
     res.json({
       messages
     });
@@ -291,6 +345,19 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
   });
 
   messagePromise.then((message) => {
+    return Promise.all([
+      User.query().where('id', message.userId),
+      Promise.resolve(message)
+    ]);
+  }).then((userAndMessage) => {
+    const user = userAndMessage[0][0];
+    const message = userAndMessage[1];
+    message.owner = {
+      id: user.id,
+      displayName: user.displayName,
+      latitude: user.latitude,
+      longitude: user.longitude
+    };
     io.to(`${roomId}`).emit('message', message);
     res.json({
       status: 'success',

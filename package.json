@@ -11,6 +11,8 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "jwt-decode": "^2.2.0",
+    "notifyjs": "^3.0.0",
     "quasar-extras": "0.0.8",
     "quasar-framework": "^0.14.3",
     "socket.io": "^2.0.3",
