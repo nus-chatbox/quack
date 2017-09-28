@@ -22,6 +22,9 @@ export default {
     },
     getUserId(state) {
       return JSON.parse(jwtDecode(state.jwtToken).sub).user.id;
+    },
+    getUsername(state) {
+      return JSON.parse(jwtDecode(state.jwtToken).sub).user.displayName;
     }
   },
   mutations: {

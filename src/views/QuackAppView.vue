@@ -14,8 +14,8 @@
       <!-- Drawer panel on the left -->
       <q-list slot="left" no-border class="bg-light left-nav">
         <div class="row flex-center bg-white" style="height: 100px;">
-          <img v-bind:src="profilePicture" style="height: 75px; width 75px;"/>
-          <div style="margin-left: 15px">{{ username }}</div>
+          <img src="../assets/logo.png" style="height: 75px; width 75px;"/>
+          <div style="margin-left: 15px">{{ this.$store.getters.getUsername }}</div>
         </div>
         <q-item-separator />
         <q-list-header class="text-center">User Settings</q-list-header>
@@ -46,7 +46,6 @@
 import { Ripple, QBtn, QLayout, QToolbar, QToolbarTitle, QCard, QFixedPosition, QList, QItemSeparator, QToggle, QListHeader } from 'quasar-framework';
 import ChatGroupList from '@/components/ChatGroupList';
 import GroupCreationModal from '@/components/GroupCreationModal';
-import quackLogo from '../assets/logo.png';
 
 
 export default {
@@ -67,19 +66,9 @@ export default {
     QListHeader,
     GroupCreationModal
   },
-  created() {
-    fetch(`https://graph.facebook.com/me?fields=id,name,picture.type(large)&access_token=${this.$store.state.user.fbToken}`)
-    .then(response => response.json())
-    .then((user) => {
-      this.username = user.name;
-      this.profilePicture = user.picture.data.url;
-    }).catch(() => {});
-  },
   data() {
     return {
-      isAnonymous: false,
-      username: 'Donald Duck',
-      profilePicture: quackLogo
+      isAnonymous: false
     };
   },
   methods: {
