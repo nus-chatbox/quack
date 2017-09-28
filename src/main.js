@@ -4,6 +4,7 @@ import Vue from 'vue';
 import Quasar from 'quasar-framework';
 import 'quasar-extras/material-icons';
 import Vuelidate from 'vuelidate';
+import VueResize from 'vue-resize';
 
 import '@/style/app.mat.styl';
 import App from '@/App';
@@ -15,6 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(Quasar);
 Vue.use(Vuelidate);
 Vue.use(vueSocialPlugin);
+Vue.use(VueResize);
 
 /* eslint-disable no-new */
 new Vue({
