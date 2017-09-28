@@ -80,9 +80,9 @@ export default {
             Accept: 'application/json',
             'Content-Type': 'application/json'
           },
-          body: {
+          body: JSON.stringify({
             title: this.chatGroupName
-          }
+          })
         })
         .then(response => response.json())
         .then((json) => {

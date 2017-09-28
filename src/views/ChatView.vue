@@ -1,81 +1,87 @@
 <template>
-  <q-layout>
-    <q-toolbar class="fixed-top" slot="header">
-        <q-btn flat icon="keyboard arrow left" @click="exitChat"></q-btn>
-      <q-toolbar-title class="center-username">
-        Brunch this weekend?
-      </q-toolbar-title>
-      <q-btn flat icon="settings">
-        <q-popover ref="popover">
-          <div id="triangle"></div>
-          <table class="q-table" id="sidebarTable">
-            <tr>
-            <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
-            </tr>
-            <tr>
-            <q-btn flat class="full-width sidebarButton">Invite Friend</q-btn>
-            </tr>
-            <tr>
-            <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
-            </tr>
-          </table>
-        </q-popover>
-      </q-btn>
-    </q-toolbar>
-    <div class="layout-padding message-box">
-      <q-chat-message
-        v-for="(msg, index) in messages"
-        :key="index"
-        :label="msg.label"
-        :sent="msg.sent"
-        :text-color="msg.textColor"
-        :bg-color="msg.bgColor"
-        :name="msg.name"
-        :avatar="msg.avatar"
-        :text="msg.text"
-        :stamp="msg.stamp"
-      />
+  <div v-if="isValidRoom === null || isValidRoom">
+    <q-layout>
+      <q-toolbar class="fixed-top" slot="header">
+          <q-btn flat icon="keyboard arrow left" @click="exitChat"></q-btn>
+        <q-toolbar-title class="center-username">
+          {{roomName}}
+        </q-toolbar-title>
+        <q-btn flat icon="settings">
+          <q-popover ref="popover">
+            <div id="triangle"></div>
+            <table class="q-table" id="sidebarTable">
+              <tr>
+              <q-toggle id="anonym" v-model="anonymous" color="blue-grey-10" label="Anonymous Quack" left-label @focus="toggleAnom(anonymous)" />
+              </tr>
+              <tr>
+              <q-btn flat class="full-width sidebarButton">Invite Friend</q-btn>
+              </tr>
+              <tr>
+              <q-btn flat class="full-width sidebarButton">Report Chat</q-btn>
+              </tr>
+            </table>
+          </q-popover>
+        </q-btn>
+      </q-toolbar>
+      <div class="layout-padding message-box">
+        <q-chat-message
+          v-for="(msg, index) in messages"
+          :key="index"
+          :label="msg.label"
+          :sent="msg.sent"
+          :text-color="msg.textColor"
+          :bg-color="msg.bgColor"
+          :name="msg.name"
+          :avatar="msg.avatar"
+          :text="msg.text"
+          :stamp="msg.stamp"
+        />
 
-      <q-chat-message
-        name="Vladimir"
-        avatar="/static/img/logo.png"
-      >
-        <q-spinner-dots size="2rem" />
-      </q-chat-message>
-    </div>
-    <q-input class="fixed-bottom message-input"
-      v-model="message"
-      type="textarea"
-      placeholder="Enter your message"
-      :min-rows="1"
-      clearable
-      inverted
-      align="center"
-      color="primary"
-      :after="[
-                {
-                  icon: 'attach file',
-                  content: false,
-                  handler () {
-                    // do something...
+        <q-chat-message
+          name="Vladimir"
+          avatar="/static/img/logo.png"
+        >
+          <q-spinner-dots size="2rem" />
+        </q-chat-message>
+      </div>
+      <q-input class="fixed-bottom message-input"
+        v-model="message"
+        type="textarea"
+        placeholder="Enter your message"
+        :min-rows="1"
+        clearable
+        inverted
+        align="center"
+        color="primary"
+        :after="[
+                  {
+                    icon: 'attach file',
+                    content: false,
+                    handler () {
+                      // do something...
+                    }
+                  },
+                  {
+                    icon: 'photo camera',
+                    content: false,
+                    handler () {
+                      // do something...
+                    }
                   }
-                },
-                {
-                  icon: 'photo camera',
-                  content: false,
-                  handler () {
-                    // do something...
-                  }
-                }
-              ]"
-    />
-  </q-layout>
+                ]"
+      />
+    </q-layout>
+  </div>
+  <div v-else>
+    <not-found-view />
+  </div>
 </template>
 
 <script>
 import 'quasar-extras/animate/bounceInDown.css';
 import 'quasar-extras/animate/fadeOut.css';
-import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert } from 'quasar-framework';
+import { QChatMessage, QSpinnerDots, QLayout, QToolbar, QToolbarTitle, QBtn, QPopover, QInput, QToggle, QList, QItem, QItemMain, QOptionGroup, Alert, Loading, QSpinnerCube } from 'quasar-framework';
+import NotFoundView from '@/views/NotFoundView';
 
 export default {
   components: {
@@ -92,10 +98,23 @@ export default {
     QItem,
     QItemMain,
     QOptionGroup,
-    Alert
+    Alert,
+    NotFoundView
+  },
+  mounted() {
+    Loading.show({
+      spinner: QSpinnerCube
+    });
+    this.$store.dispatch('enterRoom', { id: this.roomId })
+    .then(() => {
+      this.isValidRoom = true;
+      Loading.hide();
+    })
+    .catch(() => { this.isValidRoom = false; });
   },
   methods: {
     exitChat() {
+      this.$store.dispatch('leaveRoom');
       this.$router.push({ path: '/' });
     },
     toggleAnom(anonymous) {
@@ -130,6 +149,7 @@ export default {
   props: ['roomId'],
   data() {
     return {
+      isValidRoom: null,
       anonymous: true,
       message: '',
       messages: [
@@ -208,6 +228,11 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    roomName() {
+      return this.$store.state.chat.currentRoom.title;
+    }
   }
 };
 </script>

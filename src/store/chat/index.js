@@ -4,7 +4,7 @@
 /* eslint-disable prefer-template */
 export default {
   state: {
-    currentRoom: null,
+    currentRoom: {},
     nearbyRooms: [],
     roomIdToMessages: {}
   },
@@ -13,12 +13,12 @@ export default {
   },
   mutations: {
     enterRoom(state, payload) {
-      state.currentRoom = payload.roomId;
+      state.currentRoom = payload;
       window.apiSocket.emit('subscribe', payload.roomId);
     },
     leaveRoom(state) {
       window.apiSocket.emit('unsubscribe', state.currentRoom);
-      state.currentRoom = null;
+      state.currentRoom = {};
     },
     updateNearbyRooms(state, payload) {
       state.nearbyRooms = payload.rooms;
@@ -81,8 +81,41 @@ export default {
         return response.json();
       });
     },
-    enterRoom({ commit }, payload) {
-      commit('enterRoom', payload);
+    enterRoom({ commit }) {
+      // return fetch(window.apiUrl + '/rooms/' + payload.id, {
+      //   method: 'GET',
+      //   headers: {
+      //     Authorization: `bearer ${rootState.user.jwtToken}`,
+      //     Accept: 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // }).then((response) => {
+      //   return response.json();
+      // })
+      Promise.resolve({ rooms: [{
+        id: 1,
+        ownerId: 7,
+        title: 'first room',
+        photoUrl: null,
+        latitude: '123.145000',
+        longitude: '0.000000',
+        created_at: '2017-09-17T17:45:39.000Z',
+        updated_at: '2017-09-17T17:45:39.000Z',
+        distance: 0.5559746297027797
+      }] })
+      .then((json) => {
+        const rooms = json.rooms;
+        if (rooms.length === 0) {
+          return Promise.reject();
+        }
+        commit('enterRoom', rooms[0]);
+        return Promise.resolve();
+      }).catch((err) => {
+        return Promise.reject(err);
+      });
+    },
+    leaveRoom({ commit }) {
+      commit('leaveRoom');
     }
   }
 };
