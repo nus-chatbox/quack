@@ -2,6 +2,8 @@
 /* eslint-disable no-console */
 /* eslint-disable arrow-body-style */
 /* eslint-disable prefer-template */
+import jwtDecode from 'jwt-decode';
+
 export default {
   state: {
     fbToken: window.localStorage.getItem('fbToken'),
@@ -17,6 +19,9 @@ export default {
     },
     hasGeolocation(state) {
       return (state.latitude !== null) && (state.longitude !== null);
+    },
+    getUserId(state) {
+      return JSON.parse(jwtDecode(state.jwtToken).sub).user.id;
     }
   },
   mutations: {
