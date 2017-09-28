@@ -4,7 +4,6 @@
 /* eslint-disable prefer-template */
 export default {
   state: {
-    currentRoom: null,
     nearbyRooms: [],
     roomIdToMessages: {}
   },
@@ -12,15 +11,12 @@ export default {
 
   },
   mutations: {
-    enterRoom(state, payload) {
-      state.currentRoom = payload.roomId;
-      window.apiSocket.emit('subscribe', payload.roomId);
-    },
-    leaveRoom(state) {
-      window.apiSocket.emit('unsubscribe', state.currentRoom);
-      state.currentRoom = null;
-    },
     updateNearbyRooms(state, payload) {
+      const oldNearbyRoomIds = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+      window.apiSocket.emit('unsubscribe', oldNearbyRoomIds);
+
+      const newNearbyRoomIds = payload.rooms.map(nearbyRoom => nearbyRoom.id);
+      window.apiSocket.emit('subscribe', newNearbyRoomIds);
       state.nearbyRooms = payload.rooms;
     },
     initializeMessages(state, payload) {
@@ -81,8 +77,36 @@ export default {
         return response.json();
       });
     },
-    enterRoom({ commit }, payload) {
-      commit('enterRoom', payload);
+    enterRoom({ state }, payload) {
+      return fetch(window.apiUrl + '/rooms/' + payload, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        return response.json();
+      }).then((jsonResponse) => {
+        let returnPromise = Promise.reject('error (room does not exists)');
+        if (jsonResponse.rooms.length === 1) {
+          returnPromise = Promise.resolve(jsonResponse.rooms[0]);
+        }
+        return returnPromise;
+      }).then((room) => {
+        const alreadySubscribedRooms = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+        if (!alreadySubscribedRooms.includes(room.id)) {
+          window.apiSocket.emit('subscribe', [room.id]);
+        }
+        return Promise.resolve(room);
+      });
+    },
+    leaveRoom({ state }, payload) {
+      // Only need to unsubscribe if room was not in nearbyRooms
+      const nearbyRoomIds = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+      if (!nearbyRoomIds.includes(payload)) {
+        window.apiSocket.emit('unsubscribe', [payload]);
+      }
+      return Promise.resolve();
     }
   }
 };

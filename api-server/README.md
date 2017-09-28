@@ -52,9 +52,14 @@ fetch(`${apiUrl}/users`, fetchOptions).then((response) => {
 
 ## Rooms API
 ------
-### Connecting to a room
+### Connecting to some rooms
 ```
-apiSocket.emit('room', roomIdString);
+apiSocket.emit('subscribe', [...roomIds]);
+```
+
+### Disconnecting from some rooms
+```
+apiSocket.emit('unsubscribe', [...roomIds]);
 ```
 
 ### Get existing rooms
