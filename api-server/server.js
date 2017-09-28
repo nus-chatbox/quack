@@ -189,11 +189,15 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
 /******************************* Rooms ********************************/
 
 io.on('connect', (socket) => {
-  socket.on('subscribe', (room) => {
-    socket.join(room);
+  socket.on('subscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.join(room);
+    });
   });
-  socket.on('unsubscribe', (room) => {
-    socket.leave(room);
+  socket.on('unsubscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.leave(room);
+    });
   });
 });
 
@@ -213,6 +217,14 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   })).having('distance', '<=', 1).orderBy('distance', 'asc');
 
   nearbyRoomPromise.then((rooms) => {
+    res.json({
+      rooms
+    });
+  });
+});
+
+app.get('/rooms/:roomId', (req, res) => {
+  Room.query().where('id', req.params.roomId).then((rooms) => {
     res.json({
       rooms
     });
@@ -271,7 +283,15 @@ app.get('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fal
     return;
   }
 
-  Message.query().where('roomId', roomId).then((messages) => {
+  Message.query().eager('owner').where('roomId', roomId).then((messages) => {
+    messages.forEach((message) => {
+      message.owner = {
+        id: message.owner.id,
+        displayName: message.owner.displayName,
+        latitude: message.owner.latitude,
+        longitude: message.owner.longitude
+      };
+    });
     res.json({
       messages
     });

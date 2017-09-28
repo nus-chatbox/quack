@@ -4,7 +4,6 @@
 /* eslint-disable prefer-template */
 export default {
   state: {
-    currentRoom: {},
     nearbyRooms: [],
     roomIdToMessages: {}
   },
@@ -12,15 +11,12 @@ export default {
 
   },
   mutations: {
-    enterRoom(state, payload) {
-      state.currentRoom = payload;
-      window.apiSocket.emit('subscribe', payload.roomId);
-    },
-    leaveRoom(state) {
-      window.apiSocket.emit('unsubscribe', state.currentRoom);
-      state.currentRoom = {};
-    },
     updateNearbyRooms(state, payload) {
+      const oldNearbyRoomIds = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+      window.apiSocket.emit('unsubscribe', oldNearbyRoomIds);
+
+      const newNearbyRoomIds = payload.rooms.map(nearbyRoom => nearbyRoom.id);
+      window.apiSocket.emit('subscribe', newNearbyRoomIds);
       state.nearbyRooms = payload.rooms;
     },
     initializeMessages(state, payload) {
@@ -59,8 +55,8 @@ export default {
         return response.json();
       });
     },
-    getMessages({ dispatch, commit }) {
-      return dispatch('fetchMessages').then((serverResponse) => {
+    getMessages({ dispatch, commit }, payload) {
+      return dispatch('fetchMessages', payload).then((serverResponse) => {
         commit('initializeMessages', serverResponse);
         commit('patchMessages', serverResponse);
         return Promise.resolve(serverResponse);
@@ -69,8 +65,8 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchMessages({ state, rootState }) {
-      return fetch(window.apiUrl + '/rooms/' + state.currentRoom.id + '/messages', {
+    fetchMessages({ rootState }, payload) {
+      return fetch(window.apiUrl + '/rooms/' + payload.roomId + '/messages', {
         method: 'GET',
         headers: {
           Authorization: `bearer ${rootState.user.jwtToken}`,
@@ -81,41 +77,36 @@ export default {
         return response.json();
       });
     },
-    enterRoom({ commit }) {
-      // return fetch(window.apiUrl + '/rooms/' + payload.id, {
-      //   method: 'GET',
-      //   headers: {
-      //     Authorization: `bearer ${rootState.user.jwtToken}`,
-      //     Accept: 'application/json',
-      //     'Content-Type': 'application/json'
-      //   }
-      // }).then((response) => {
-      //   return response.json();
-      // })
-      Promise.resolve({ rooms: [{
-        created_at: '2017-09-27T16:09:43.000Z',
-        distance: 0.0008956178097774487,
-        id: 20,
-        latitude: '1.336395',
-        longitude: '103.927959',
-        ownerId: 1,
-        photoUrl: null,
-        title: 'asdfasdf',
-        updated_at: '2017-09-27T16:09:43.000Z'
-      }] })
-      .then((json) => {
-        const rooms = json.rooms;
-        if (rooms.length === 0) {
-          return Promise.reject();
+    enterRoom({ dispatch, state }, payload) {
+      return fetch(window.apiUrl + '/rooms/' + payload, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
         }
-        commit('enterRoom', rooms[0]);
-        return Promise.resolve();
-      }).catch((err) => {
-        return Promise.reject(err);
+      }).then((response) => {
+        return response.json();
+      }).then((jsonResponse) => {
+        let returnPromise = Promise.reject('error (room does not exists)');
+        if (jsonResponse.rooms.length === 1) {
+          returnPromise = Promise.resolve(jsonResponse.rooms[0]);
+        }
+        return returnPromise;
+      }).then((room) => {
+        const alreadySubscribedRooms = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+        if (!alreadySubscribedRooms.includes(room.id)) {
+          window.apiSocket.emit('subscribe', [room.id]);
+        }
+        return Promise.resolve(room);
       });
     },
-    leaveRoom({ commit }) {
-      commit('leaveRoom');
+    leaveRoom({ state }, payload) {
+      // Only need to unsubscribe if room was not in nearbyRooms
+      const nearbyRoomIds = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
+      if (!nearbyRoomIds.includes(payload)) {
+        window.apiSocket.emit('unsubscribe', [payload]);
+      }
+      return Promise.resolve();
     }
   }
 };
