@@ -115,6 +115,15 @@ const getFBUser = (fbToken) => {
 app.post('/authenticate', (req, res) => {
   const oldFbToken = req.body.fbToken;
 
+  if (_.isEmpty(oldFbToken)) {
+    res.status(400).send({
+      status: 400,
+      message: 'FB client access token not found in request body',
+      token: null
+    });
+    return;
+  }
+
   exchangeFbToken(oldFbToken).then((fbResponseJSON) => {
     const fbResponse = JSON.parse(fbResponseJSON);
     const newFbToken = fbResponse.access_token;
@@ -146,7 +155,9 @@ app.post('/authenticate', (req, res) => {
       jwtToken
     });
   }).catch(() => {
-    res.json({
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request',
       token: null
     });
   });
@@ -160,8 +171,9 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
   const updatedUserLongitude = Number(req.body.longitude);
 
   if (_.isNaN(updatedUserLatitude) || _.isNaN(updatedUserLongitude)) {
-    res.json({
-      status: 'error (invalid user geolocation)'
+    res.status(400).send({
+      status: 400,
+      message: 'invalid user geolocation, try refreshing your chat'
     });
     return;
   }
@@ -180,8 +192,9 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
       jwtToken
     });
   }).catch((err) => {
-    res.json({
-      status: err
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request'
     });
   });
 });
@@ -204,6 +217,14 @@ io.on('connect', (socket) => {
 app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const userLatitude = req.user.latitude;
   const userLongitude = req.user.longitude;
+
+  if (_.isNaN(userLatitude) || _.isNaN(userLongitude)) {
+    res.status(400).send({
+      status: 400,
+      message: 'invalid user geolocation, try refreshing your chat'
+    });
+    return;
+  }
 
   const nearbyRoomPromise = Room.query().select(
     raw(`*, (6371 * acos(cos(radians(:userLatitude)) * \
@@ -247,6 +268,12 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
     res.json({
       rooms
     });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request',
+      rooms: null
+    });
   });
 });
 
@@ -254,6 +281,12 @@ app.get('/rooms/:roomId', (req, res) => {
   Room.query().where('id', req.params.roomId).then((rooms) => {
     res.json({
       rooms
+    });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request',
+      rooms: null
     });
   });
 });
@@ -265,8 +298,17 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
   const title = req.body.title;
 
   if (_.isNaN(latitude) || _.isNaN(longitude)) {
-    res.json({
-      status: 'error (invalid geolocation)'
+    res.status(400).send({
+      status: 400,
+      message: 'invalid user geolocation, try refreshing your chat'
+    });
+    return;
+  }
+
+  if (_.isEmpty(title)) {
+    res.status(400).send({
+      status: 400,
+      message: 'Title not found in request body'
     });
     return;
   }
@@ -284,8 +326,10 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
       room
     });
   }).catch(() => {
-    res.json({
-      status: 'error'
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request',
+      room: null
     });
   });
 });
@@ -297,6 +341,11 @@ app.get('/subscriptions', passport.authenticate(['jwt'], { session: false }), (r
     res.json({
       rooms: users[0].subscriptions
     });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request'
+    });
   });
 });
 
@@ -304,7 +353,9 @@ app.get('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fal
   const roomId = Number(req.params.roomId);
 
   if (_.isNaN(roomId)) {
-    res.json({
+    res.status(400).send({
+      status: 400,
+      message: 'roomId not found in request parameter',
       messages: []
     });
     return;
@@ -322,6 +373,11 @@ app.get('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fal
     res.json({
       messages
     });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request'
+    });
   });
 });
 
@@ -331,15 +387,17 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
   const text = req.body.text;
 
   if (_.isNaN(roomId)) {
-    res.json({
-      status: 'error (invalid room id)'
+    res.status(400).send({
+      status: 400,
+      message: 'Invalid roomId found in request body'
     });
     return;
   }
 
   if (_.isEmpty(text)) {
-    res.json({
-      status: 'error (empty message)'
+    res.status(400).send({
+      status: 400,
+      message: 'Message text cannot be empty'
     });
     return;
   }
@@ -371,8 +429,9 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
       message
     });
   }).catch(() => {
-    res.json({
-      status: 'error'
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred with processing your request'
     });
   });
 });
