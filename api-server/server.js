@@ -216,7 +216,23 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
     userLongitude
   })).having('distance', '<=', 1).orderBy('distance', 'asc');
 
-  nearbyRoomPromise.then((rooms) => {
+  nearbyRoomPromise.eager('messages(last).owner', {
+    last: (builder) => {
+      builder.orderBy('id', 'desc').limit(1)
+    }
+  }).then((rooms) => {
+    rooms.forEach((room) => {
+      if (room.messages.length > 0) {
+        const lastMessageOwner = room.messages[0].owner;
+
+        room.messages[0].owner = {
+          id: lastMessageOwner.id,
+          displayName: lastMessageOwner.displayName,
+          latitude: lastMessageOwner.latitude,
+          longitude: lastMessageOwner.longitude
+        };
+      }
+    });
     res.json({
       rooms
     });
