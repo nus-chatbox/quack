@@ -2,13 +2,19 @@
 /* eslint-disable no-console */
 /* eslint-disable arrow-body-style */
 /* eslint-disable prefer-template */
+import Vue from 'vue';
+
 export default {
   state: {
     nearbyRooms: [],
     roomIdToMessages: {}
   },
   getters: {
-
+    getRoomMessages(state) {
+      return (roomId) => {
+        return state.roomIdToMessages[roomId];
+      };
+    }
   },
   mutations: {
     updateNearbyRooms(state, payload) {
@@ -21,13 +27,13 @@ export default {
     },
     initializeMessages(state, payload) {
       payload.messages.forEach((message) => {
-        state.roomIdToMessages[message.roomId] = [];
+        Vue.set(state.roomIdToMessages, message.roomId, []);
       });
     },
     patchMessages(state, payload) {
       payload.messages.forEach((message) => {
         if (state.roomIdToMessages[message.roomId] === undefined) {
-          state.roomIdToMessages[message.roomId] = [];
+          Vue.set(state.roomIdToMessages, message.roomId, []);
         }
         state.roomIdToMessages[message.roomId].push(message);
       });
@@ -87,18 +93,18 @@ export default {
       }).then((response) => {
         return response.json();
       }).then((jsonResponse) => {
-        let returnPromise = Promise.reject('error (room does not exists)');
         if (jsonResponse.rooms.length === 1) {
-          returnPromise = Promise.resolve(jsonResponse.rooms[0]);
+          return Promise.resolve(jsonResponse.rooms[0]);
         }
-        return returnPromise;
+        return Promise.reject('error (room does not exists)');
       }).then((room) => {
         const alreadySubscribedRooms = state.nearbyRooms.map(nearbyRoom => nearbyRoom.id);
         if (!alreadySubscribedRooms.includes(room.id)) {
           window.apiSocket.emit('subscribe', [room.id]);
         }
         return Promise.resolve(room);
-      });
+      })
+      .catch(err => Promise.reject(err));
     },
     leaveRoom({ state }, payload) {
       // Only need to unsubscribe if room was not in nearbyRooms

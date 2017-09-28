@@ -128,10 +128,10 @@ app.post('/authenticate', (req, res) => {
     const fbId = user.id;
     const displayName = user.name;
     return Promise.all([
-      User.findOrCreate({ 
+      User.findOrCreate({
         facebookId: fbId,
         displayName
-      }), 
+      }),
       Promise.resolve(fbToken)
     ]);
   }).then((userAndToken) => {
@@ -318,6 +318,19 @@ app.post('/rooms/:roomId/messages', passport.authenticate(['jwt'], { session: fa
   });
 
   messagePromise.then((message) => {
+    return Promise.all([
+      User.query().where('id', message.userId),
+      Promise.resolve(message)
+    ]);
+  }).then((userAndMessage) => {
+    const user = userAndMessage[0][0];
+    const message = userAndMessage[1];
+    message.owner = {
+      id: user.id,
+      displayName: user.displayName,
+      latitude: user.latitude,
+      longitude: user.longitude
+    };
     io.to(`${roomId}`).emit('message', message);
     res.json({
       status: 'success',
