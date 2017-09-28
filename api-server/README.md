@@ -141,6 +141,33 @@ fetch(`${apiUrl}/subscriptions`, fetchOptions).then((response) => {
 });
 ```
 
+### Get information about a single room
+```
+// Public API
+let fetchOptions = {
+  method: "GET",
+  headers: headers
+};
+
+fetch(`${apiUrl}/rooms/${roomId}`, fetchOptions).then((response) => {
+  // Example response
+  {
+    "rooms": [
+      {
+        "id": 5,
+        "ownerId": 7,
+        "title": "My first room",
+        "photoUrl": null,
+        "latitude": "1.281250",
+        "longitude": "103.830381",
+        "created_at": "2017-09-27T12:15:59.000Z",
+        "updated_at": "2017-09-27T12:15:59.000Z"
+      }
+  ]
+}
+});
+```
+
 ## Messages API
 ------
 
@@ -158,24 +185,36 @@ fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
   {
     "messages": [
       {
-        "id": 1,
+        "id": 6,
         "userId": 7,
-        "roomId": 1,
+        "roomId": 5,
         "attachmentUrl": null,
         "attachmentType": "text",
-        "text": "something else",
-        "created_at": "2017-09-23T12:03:35.000Z",
-        "updated_at": "2017-09-23T12:03:35.000Z"
+        "text": "Test message",
+        "created_at": "2017-09-27T12:53:00.000Z",
+        "updated_at": "2017-09-27T12:53:00.000Z",
+        "owner": {
+          "id": 7,
+          "displayName": "CT Niw",
+          "latitude": "123.015000",
+          "longitude": "0.003900"
+        }
       },
       {
-        "id": 2,
+        "id": 7,
         "userId": 7,
-        "roomId": 1,
+        "roomId": 5,
         "attachmentUrl": null,
         "attachmentType": "text",
-        "text": "something else2",
-        "created_at": "2017-09-23T12:03:54.000Z",
-        "updated_at": "2017-09-23T12:03:54.000Z"
+        "text": "Test message",
+        "created_at": "2017-09-27T12:55:22.000Z",
+        "updated_at": "2017-09-27T12:55:22.000Z",
+        "owner": {
+          "id": 7,
+          "displayName": "CT Niw",
+          "latitude": "123.015000",
+          "longitude": "0.003900"
+        }
       }
     ]
   }
