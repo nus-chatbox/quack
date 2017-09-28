@@ -55,8 +55,8 @@ export default {
         return response.json();
       });
     },
-    getMessages({ dispatch, commit }) {
-      return dispatch('fetchMessages').then((serverResponse) => {
+    getMessages({ dispatch, commit }, payload) {
+      return dispatch('fetchMessages', payload).then((serverResponse) => {
         commit('initializeMessages', serverResponse);
         commit('patchMessages', serverResponse);
         return Promise.resolve(serverResponse);
@@ -65,8 +65,8 @@ export default {
         return Promise.reject(err);
       });
     },
-    fetchMessages({ state, rootState }) {
-      return fetch(window.apiUrl + '/rooms/' + state.currentRoom + '/messages', {
+    fetchMessages({ rootState }, payload) {
+      return fetch(window.apiUrl + '/rooms/' + payload.roomId + '/messages', {
         method: 'GET',
         headers: {
           Authorization: `bearer ${rootState.user.jwtToken}`,
@@ -77,7 +77,7 @@ export default {
         return response.json();
       });
     },
-    enterRoom({ state }, payload) {
+    enterRoom({ dispatch, state }, payload) {
       return fetch(window.apiUrl + '/rooms/' + payload, {
         method: 'GET',
         headers: {
