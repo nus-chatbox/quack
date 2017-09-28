@@ -189,11 +189,15 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
 /******************************* Rooms ********************************/
 
 io.on('connect', (socket) => {
-  socket.on('subscribe', (room) => {
-    socket.join(room);
+  socket.on('subscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.join(room);
+    });
   });
-  socket.on('unsubscribe', (room) => {
-    socket.leave(room);
+  socket.on('unsubscribe', (rooms) => {
+    rooms.forEach((room) => {
+      socket.leave(room);
+    });
   });
 });
 
