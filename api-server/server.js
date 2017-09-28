@@ -167,21 +167,30 @@ app.post('/authenticate', (req, res) => {
 
 app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const id = req.user.id;
+  const updatedDisplayName = req.body.displayName;
   const updatedUserLatitude = Number(req.body.latitude);
   const updatedUserLongitude = Number(req.body.longitude);
 
-  if (_.isNaN(updatedUserLatitude) || _.isNaN(updatedUserLongitude)) {
+  if (_.isNaN(updatedUserLatitude) && _.isNaN(updatedUserLongitude) && _.isEmpty(updatedDisplayName)) {
     res.status(400).send({
       status: 400,
-      message: 'invalid user geolocation, try refreshing your chat'
+      message: 'Invalid user geolocation or missing displayName in request body'
     });
     return;
   }
 
-  User.query().patch({
-    latitude: updatedUserLatitude,
-    longitude: updatedUserLongitude
-  }).where('id', id).then((updateCount) => {
+  const patchObject = {};
+  if (!_.isNaN(updatedUserLatitude)) {
+    patchObject.latitude = updatedUserLatitude;
+  }
+  if (!_.isNaN(updatedUserLongitude)) {
+    patchObject.longitude = updatedUserLongitude;
+  }
+  if (!_.isEmpty(updatedDisplayName)) {
+    patchObject.displayName = updatedDisplayName;
+  }
+
+  User.query().patch(patchObject).where('id', id).then((updateCount) => {
     return User.query().where('id', id);
   }).then((users) => {
     const payload = {
