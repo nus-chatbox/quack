@@ -1,6 +1,6 @@
 {
-  "name": "quack",
-  "short_name": "quack",
+  "name": "Quack",
+  "short_name": "Quack",
   "icons": [
     {
       "src": "/static/img/icons/android-chrome-192x192.png",

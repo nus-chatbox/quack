@@ -18,7 +18,7 @@ export default {
     getLatestRoomMessage(state, getters) {
       return (roomId) => {
         const roomMessages = getters.getRoomMessages(roomId);
-        return roomMessages[roomMessages.length - 1];
+        return (roomMessages.length > 0) ? roomMessages[roomMessages.length - 1] : '';
       };
     }
   },
@@ -32,7 +32,7 @@ export default {
 
       const clonedRooms = JSON.parse(JSON.stringify(payload.rooms));
       clonedRooms.forEach((room) => {
-        Vue.set(state.roomIdToMessages, room.id, [room.messages[0]]);
+        Vue.set(state.roomIdToMessages, room.id, room.messages);
         delete room.messages;
       });
       state.nearbyRooms = clonedRooms;
