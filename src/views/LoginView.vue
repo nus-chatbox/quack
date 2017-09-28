@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { Ripple, QBtn, QLayout, Loading, QSpinnerCube } from 'quasar-framework';
+import { Alert, Ripple, QBtn, QLayout, Loading, QSpinnerCube } from 'quasar-framework';
 
 export default {
   directives: {
@@ -38,6 +38,22 @@ export default {
         if (this.$store.getters.isLoggedIn) {
           this.$router.go(-1);
         }
+        Loading.hide();
+      }).catch(() => {
+        const alert = Alert.create({
+          color: 'negative',
+          icon: 'warning',
+          html: 'Login was cancelled!',
+          duration: 1000,
+          enter: 'fadeInDown',
+          leave: 'fadeOut',
+          position: 'top-center',
+          id: 'one',
+          dismissible: true
+        });
+        setTimeout(() => {
+          alert.dismiss();
+        }, 2000);
         Loading.hide();
       });
     }
