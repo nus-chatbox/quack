@@ -227,7 +227,7 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
   }
 
   const nearbyRoomPromise = Room.query().select(
-    raw(`*, (6371 * acos(cos(radians(:userLatitude)) * \
+    raw(`*, (6371000 * acos(cos(radians(:userLatitude)) * \
                          cos(radians(latitude)) * \
                          cos(radians(longitude) - \
                              radians(:userLongitude)) + \
@@ -235,7 +235,7 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
                          sin(radians(latitude)))) as distance`, {
     userLatitude,
     userLongitude
-  })).having('distance', '<=', 0.1).orderBy('distance', 'asc');
+  })).having('distance', '<=', 100).orderBy('distance', 'asc');
 
   nearbyRoomPromise.then((rooms) => {
     const roomsWithLastMessagePromise = rooms.map((room) => {
