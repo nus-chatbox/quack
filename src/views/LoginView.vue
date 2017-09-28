@@ -1,8 +1,8 @@
 <template>
   <div class="landing-page">
     <q-layout>
-      <div class="layout-padding text-center">
-        <img class="responsive" src="../assets/logo.png" />
+      <div class="layout-padding text-center center-piece">
+        <img class="responsive logo-width" src="../assets/logo.png" />
         <p class="caption"><h2><strong>Quack</strong></h2></p>
         <p class="caption"><h5>Friends Everywhere.</h5></p>
         <div class="layout-padding">
@@ -69,5 +69,12 @@ export default {
   background-color: #3B5998
 
 .landing-page
-  // margin-top: 40px
+  background-image: url('/static/img/bg.png')
+  background-size: cover
+
+.logo-width
+  max-width: 50%
+
+.center-piece
+  padding-top: 60px
 </style>
