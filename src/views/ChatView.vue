@@ -28,7 +28,7 @@
           v-for="(msg, index) in messages"
           :key="index"
           :label="msg.label"
-          :sent="msg.sent"
+          :sent="msg.userId === userId"
           :name="msg.owner.displayName"
           avatar="/static/img/logo.png"
           :text="[msg.text]"
@@ -44,6 +44,7 @@
         inverted
         align="center"
         color="primary"
+        @keydown.enter="sendMessage"
         :after="[
                   {
                     icon: 'send',
@@ -157,7 +158,8 @@ export default {
       isValidRoom: null,
       anonymous: true,
       message: '',
-      roomName: ''
+      roomName: '',
+      userId: this.$store.getters.getUserId
     };
   },
   computed: {
