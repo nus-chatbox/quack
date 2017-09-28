@@ -8,8 +8,6 @@
         <q-toolbar-title class="center-username">
           Nearby Quacks
         </q-toolbar-title>
-        <q-btn flat icon="settings" @click="">
-        </q-btn>
       </q-toolbar>
 
       <!-- Drawer panel on the left -->
