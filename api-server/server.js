@@ -216,23 +216,34 @@ app.get('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res)
     userLongitude
   })).having('distance', '<=', 1).orderBy('distance', 'asc');
 
-  nearbyRoomPromise.eager('messages(last).owner', {
-    last: (builder) => {
-      builder.orderBy('id', 'desc').limit(1)
-    }
-  }).then((rooms) => {
-    rooms.forEach((room) => {
-      if (room.messages.length > 0) {
-        const lastMessageOwner = room.messages[0].owner;
+  nearbyRoomPromise.then((rooms) => {
+    const roomsWithLastMessagePromise = rooms.map((room) => {
+      return Promise.all([
+        Promise.resolve(room),
+        Message.query().eager('owner').where('roomId', room.id).orderBy('id', 'desc').first()
+      ]);
+    });
+    return Promise.all(roomsWithLastMessagePromise);
+  }).then((pairsOfRoomWithLastMessage) => {
+    let rooms = [];
+    pairsOfRoomWithLastMessage.forEach((pairOfRoomWithLastMessage) => {
+      let room = pairOfRoomWithLastMessage[0];
+      let message = pairOfRoomWithLastMessage[1];
 
-        room.messages[0].owner = {
+      if (message !== undefined) {
+        const lastMessageOwner = message.owner;
+        message.owner = {
           id: lastMessageOwner.id,
           displayName: lastMessageOwner.displayName,
           latitude: lastMessageOwner.latitude,
           longitude: lastMessageOwner.longitude
         };
       }
+
+      room.messages = message === undefined ? [] : [message];
+      rooms.push(room);
     });
+
     res.json({
       rooms
     });
