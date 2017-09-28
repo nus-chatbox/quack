@@ -70,7 +70,7 @@ export default {
       });
     },
     fetchMessages({ state, rootState }) {
-      return fetch(window.apiUrl + '/rooms/' + state.currentRoom + '/messages', {
+      return fetch(window.apiUrl + '/rooms/' + state.currentRoom.id + '/messages', {
         method: 'GET',
         headers: {
           Authorization: `bearer ${rootState.user.jwtToken}`,
@@ -93,15 +93,15 @@ export default {
       //   return response.json();
       // })
       Promise.resolve({ rooms: [{
-        id: 1,
-        ownerId: 7,
-        title: 'first room',
+        created_at: '2017-09-27T16:09:43.000Z',
+        distance: 0.0008956178097774487,
+        id: 20,
+        latitude: '1.336395',
+        longitude: '103.927959',
+        ownerId: 1,
         photoUrl: null,
-        latitude: '123.145000',
-        longitude: '0.000000',
-        created_at: '2017-09-17T17:45:39.000Z',
-        updated_at: '2017-09-17T17:45:39.000Z',
-        distance: 0.5559746297027797
+        title: 'asdfasdf',
+        updated_at: '2017-09-27T16:09:43.000Z'
       }] })
       .then((json) => {
         const rooms = json.rooms;
