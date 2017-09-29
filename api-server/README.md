@@ -72,20 +72,37 @@ let fetchOptions = {
 
 fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
   // Example response
-  {
-    "rooms": [
-      {
-        "id": 1,
-        "ownerId": 7,
-        "title": "first room",
-        "photoUrl": null,
-        "latitude": "123.145000",
-        "longitude": "0.000000",
-        "created_at": "2017-09-17T17:45:39.000Z",
-        "updated_at": "2017-09-17T17:45:39.000Z",
-        "distance": 0.5559746297027797
-      }
-    ]
+  {  
+  "rooms":[  
+    {  
+      "id":8,
+      "ownerId":1,
+      "title":"With Ryan",
+      "photoUrl":null,
+      "latitude":"1.281315",
+      "longitude":"103.830404",
+      "created_at":"2017-09-28T13:31:15.000Z",
+      "updated_at":"2017-09-28T13:31:15.000Z",
+      "distance":3.182811169246599,
+      "messages":[  
+        {  
+          "id":124,
+          "userId":1,
+          "roomId":8,
+          "attachmentUrl":null,
+          "attachmentType":"text",
+          "text":"Ahem",
+          "created_at":"2017-09-28T17:58:20.000Z",
+          "updated_at":"2017-09-28T17:58:20.000Z",
+          "owner":{  
+            "id":1,
+            "displayName":"Curtis Tan",
+            "latitude":"1.281287",
+            "longitude":"103.830398"
+          }
+        }
+      ]
+    }
   }
 });
 ```
@@ -114,34 +131,6 @@ fetch(`${apiUrl}/rooms`, fetchOptions).then((response) => {
         "longitude": 0,
         "id": 4
     }
-  }
-});
-```
-
-### Get currently subscribed rooms
-```
-// Requires JWT authentication
-let fetchOptions = {
-  method: "GET",
-  headers: headers
-};
-
-fetch(`${apiUrl}/subscriptions`, fetchOptions).then((response) => {
-  // Example response
-  {
-    "rooms": [
-      {
-        "id": 1,
-        "ownerId": 7,
-        "title": "first room",
-        "photoUrl": null,
-        "latitude": "123.145000",
-        "longitude": "0.000000",
-        "created_at": "2017-09-17T17:45:39.000Z",
-        "updated_at": "2017-09-17T17:45:39.000Z",
-        "distance": 0.5559746297027797
-      }
-    ]
   }
 });
 ```
@@ -175,8 +164,6 @@ fetch(`${apiUrl}/rooms/${roomId}`, fetchOptions).then((response) => {
 
 ## Messages API
 ------
-
-
 ### Get all messages from a room
 ```
 // Requires JWT authentication
@@ -227,7 +214,6 @@ fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
 ```
 
 ### Create a new message for a room
-
 ```
 // Requires JWT authentication
 let body = {
