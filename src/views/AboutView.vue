@@ -52,5 +52,5 @@ p
   font-size: 22px
 
 .fullscreen
-  overflow auto
+  overflow: auto
 </style>
