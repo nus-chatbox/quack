@@ -13,7 +13,7 @@
         </q-toolbar-title>
         <q-btn flat icon="share" @click="$refs.shareModal.open();"></q-btn>
       </q-toolbar>
-      <q-scroll-area :style="{ height: (clientHeight - 10) + 'px' }" ref="messageBox">
+      <q-scroll-area style="height: 100vh;" ref="messageBox">
         <div class="layout-padding message-box">
           <q-chat-message
             v-for="(msg, index) in messages"
@@ -171,10 +171,9 @@ export default {
     },
     inputClicked() {
       if (window.navigator &&
-          !window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/) &&
-          this.$refs.messageBox.scrollPercentage > 0.8) {
+          window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/)) {
         this.scrollToBottom();
-      } else {
+      } else if (this.$refs.messageBox.scrollPercentage > 0.975){
         this.scrollToBottom();
       }
     }
@@ -187,7 +186,6 @@ export default {
       message: '',
       roomName: '',
       userId: this.$store.getters.getUserId,
-      clientHeight: 0,
       unwatchMessage: null,
       hasDoneFirstScroll: false,
       debounceId: null
