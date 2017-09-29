@@ -1,3 +1,4 @@
+![Quack](/static/img/logo.png)
 # Quack
 
 ## Enabling a highly localised geolocation-based community through chat @ [https://quack.press](https://quack.press)
