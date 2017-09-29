@@ -1,11 +1,11 @@
 <template>
 	<div>
-    <q-layout class="static-bg">
+    <q-layout class="static-bg fullscreen">
       <router-link to="/" class="fixed-bottom-right" style="margin-bottom:16px; margin-right:16px">
           <q-btn icon="arrow back" round big v-ripple color="primary">
           </q-btn>
       </router-link>
-      <div class="layout-padding">
+      <div class="layout-view layout-padding">
         <div class="text-center">
           <h4><strong>Terms of Service</strong></h4>
         </div>
@@ -114,4 +114,7 @@ export default {
 .static-bg
   background-image:url('/static/img/bg.png')
   background-size:cover
+
+.fullscreen
+  overflow auto
 </style>
