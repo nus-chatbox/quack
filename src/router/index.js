@@ -6,6 +6,8 @@ import QuackAppView from '@/views/QuackAppView';
 import LoginView from '@/views/LoginView';
 import ChatView from '@/views/ChatView';
 import TermsView from '@/views/TermsView';
+import PrivacyView from '@/views/PrivacyView';
+import AboutView from '@/views/AboutView';
 import NotFoundView from '@/views/NotFoundView';
 
 Vue.use(VueRouter);
@@ -36,6 +38,18 @@ const Router = new VueRouter({
       path: '/terms',
       name: 'TermsView',
       component: TermsView,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/privacy',
+      name: 'PrivacyView',
+      component: PrivacyView,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/about',
+      name: 'AboutView',
+      component: AboutView,
       meta: { requiresAuth: false }
     },
     {

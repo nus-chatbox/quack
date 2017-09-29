@@ -1,6 +1,6 @@
 <template>
 	<div>
-    <q-layout>
+    <q-layout class="static-bg">
       <router-link to="/" class="fixed-bottom-right" style="margin-bottom:16px; margin-right:16px">
           <q-btn icon="arrow back" round big v-ripple color="primary">
           </q-btn>
@@ -110,4 +110,8 @@ export default {
   margin-bottom:25px
   font-size:18px
   font-weight: bold
+
+.static-bg
+  background-image:url('/static/img/bg.png')
+  background-size:cover
 </style>
