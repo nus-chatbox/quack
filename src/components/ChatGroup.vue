@@ -13,7 +13,7 @@
          :sublabel="lastMessage"
          sublabel-lines="2"
         />
-        <q-item-side right stamp="5 m<br>away" />
+        <q-item-side right :stamp="roomDistance" />
       </q-item>
     </q-card-main>
   </q-card>
@@ -36,7 +36,7 @@ export default {
     QItemMain,
     QItemTile
   },
-  props: ['id', 'name'],
+  props: ['id', 'name', 'distance'],
   computed: {
     lastMessage() {
       const message = this.$store.getters.getLatestRoomMessage(this.id);
@@ -44,6 +44,10 @@ export default {
         return `${message.owner.displayName} : ${message.text}`;
       }
       return '';
+    },
+    roomDistance() {
+      const roomDist = Math.round(this.distance);
+      return roomDist === 0 ? '< 1m<br>away' : `${roomDist}m<br>away`;
     }
   }
 };

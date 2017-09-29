@@ -11,7 +11,7 @@
         <div v-else v-for="room in nearbyRooms">
           <q-transition appear enter="fadeIn" leave="fadeOut">
             <router-link :to="`/chat/${room.id}`">
-              <chat-group :id="room.id" :name="room.title"></chat-group>
+              <chat-group :id="room.id" :name="room.title" :distance="room.distance"></chat-group>
             </router-link>
           </q-transition>
         </div>
