@@ -8,7 +8,8 @@
         <q-toolbar-title class="center-username">
           Nearby Quacks
         </q-toolbar-title>
-        <div class="balance-toolbar"></div>
+        <q-btn flat icon="" @click="">
+        </q-btn>
       </q-toolbar>
 
       <!-- Drawer panel on the left -->
@@ -141,9 +142,6 @@ export default {
 
 .add-button-vert
   flex: 1
-  
-.balance-toolbar
-  flex: 0.17 0.17 auto
 
 .panel-user
   align-items: center
