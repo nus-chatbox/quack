@@ -116,5 +116,5 @@ export default {
   background-size:cover
 
 .fullscreen
-  overflow auto
+  overflow: auto
 </style>
