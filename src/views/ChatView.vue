@@ -13,7 +13,6 @@
         </q-toolbar-title>
         <q-btn flat icon="share" @click="$refs.shareModal.open();"></q-btn>
       </q-toolbar>
-      <resize-observer @notify="handleResize" />
       <q-scroll-area :style="{ height: (clientHeight - 10) + 'px' }" ref="messageBox">
         <div class="layout-padding message-box">
           <q-chat-message
@@ -157,12 +156,6 @@ export default {
       // eslint-disable-next-line no-console
       .catch((err) => { console.error(err); });
     },
-    handleResize() {
-      this.clientHeight = this.$el.clientHeight;
-      if (this.$refs.messageBox.scrollPercentage > 0.975) {
-        this.scrollToBottom();
-      }
-    },
     scrollToBottom() {
       this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.scrollHeight, 1);
     }
@@ -178,7 +171,8 @@ export default {
       clientHeight: 0,
       unwatchMessage: null,
       hasDoneFirstScroll: false,
-      debounceId: null
+      debounceId: null,
+      debounceResizeId: null
     };
   },
   computed: {
