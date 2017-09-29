@@ -5,7 +5,7 @@
 ### Developers
 ---
 #### Ng Si Kai (A0124828B)
-
+Mobile UI implementation, Front end research, Front end logic, Call API
 
 #### Lau Shi Jie (A0111614X)
 User interface and experince design
