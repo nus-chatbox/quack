@@ -164,8 +164,6 @@ fetch(`${apiUrl}/rooms/${roomId}`, fetchOptions).then((response) => {
 
 ## Messages API
 ------
-
-
 ### Get all messages from a room
 ```
 // Requires JWT authentication
@@ -216,7 +214,6 @@ fetch(`${apiUrl}/rooms/${roomId}/messages`, fetchOptions).then((response) => {
 ```
 
 ### Create a new message for a room
-
 ```
 // Requires JWT authentication
 let body = {
