@@ -30,9 +30,6 @@
         <router-link to="/terms">
           <q-list-header class="text-center">Terms</q-list-header>
         </router-link>
-        <router-link to="contact">
-          <q-list-header class="text-center">Contact Us</q-list-header>
-        </router-link>
         <q-item-separator />
         <q-btn icon="exit to app" class="full-width" @click="logout()">
           Log Out
