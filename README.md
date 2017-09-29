@@ -8,7 +8,7 @@
 
 
 #### Lau Shi Jie (A0111614X)
-
+User interface and experince design
 
 #### Curtis Tan (A0129529W)
 Front end styling, Login service logic, Server-side API, Server configuration
