@@ -13,8 +13,7 @@
 #### Curtis Tan (A0129529W)
 Front end styling, Login service logic, Server-side API, Server configuration
 
-#### Daphne Won Jun Ru (A0126172M)
-
+#### Daphne Won (A0126172M)
 
 ### Contact Us
 ---
