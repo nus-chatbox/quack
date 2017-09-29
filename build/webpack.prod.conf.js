@@ -100,7 +100,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     new SWPrecacheWebpackPlugin({
       cacheId: 'my-vue-app',
       filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      staticFileGlobs: ['dist/index.html', 'dist/service-worker.js', 'dist/static/**/*.{js,html,css,png,svg,woff,map}'],
       minify: true,
       stripPrefix: 'dist/'
     })

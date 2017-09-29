@@ -158,10 +158,16 @@ export default {
       .catch((err) => { console.error(err); });
     },
     handleResize() {
-      this.clientHeight = this.$el.clientHeight;
-      if (this.$refs.messageBox.scrollPercentage > 0.975) {
-        this.scrollToBottom();
+      if (this.debounceResizeId !== null) {
+        clearTimeout(this.debounceResizeId);
       }
+      this.debounceResizeId = setTimeout(() => {
+        this.clientHeight = this.$el.clientHeight;
+        if (this.$refs.messageBox.scrollPercentage > 0.975) {
+          this.scrollToBottom();
+        }
+        this.debounceId = null;
+      }, 75);
     },
     scrollToBottom() {
       this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.scrollHeight, 1);
@@ -178,7 +184,8 @@ export default {
       clientHeight: 0,
       unwatchMessage: null,
       hasDoneFirstScroll: false,
-      debounceId: null
+      debounceId: null,
+      debounceResizeId: null
     };
   },
   computed: {
