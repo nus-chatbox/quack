@@ -5,6 +5,7 @@ import store from '@/store';
 import QuackAppView from '@/views/QuackAppView';
 import LoginView from '@/views/LoginView';
 import ChatView from '@/views/ChatView';
+import TermsView from '@/views/TermsView';
 import NotFoundView from '@/views/NotFoundView';
 
 Vue.use(VueRouter);
@@ -30,6 +31,12 @@ const Router = new VueRouter({
       component: ChatView,
       props: true,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/terms',
+      name: 'TermsView',
+      component: TermsView,
+      meta: { requiresAuth: false }
     },
     {
       path: '*',
