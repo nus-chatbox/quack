@@ -24,5 +24,12 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
-});
+  components: { App },
+  methods: {
+    startapp() {
+      document.getElementById('mainapp').classList.remove('hidden');
+      document.getElementById('loading').classList.add('hidden');
+    }
+  }
+}).startapp();
+

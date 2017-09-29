@@ -61,6 +61,10 @@
       </script>
   </head>
   <body>
+    <div id="loading">
+      <img src="<%= htmlWebpackPlugin.files.publicPath %>static/img/runningduck.gif" class="runningduck">
+      <div class="circle-big"></div>
+    </div>
     <noscript>
       <br>
       <center>
@@ -73,9 +77,69 @@
         </div>
       </center>
     </noscript>
-    <div id="app"></div>
+    <div id="mainapp" class="hidden">
+      <div id="app"></div>
+    </div>
     <!-- Todo: only include in production -->
     <%= htmlWebpackPlugin.options.serviceWorkerLoader %>
     <!-- built files will be auto injected -->
+    <style>
+      *{
+        margin: 0;
+        padding: 0;
+      }
+
+      .hidden{
+        display: none;
+        overflow: hidden;
+      }
+
+      .circle-big{
+        width: 210px;
+        height: 210px;
+        border: 4px dotted #1ABC9C;
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -109px;
+        margin-top: -109px;
+        border-radius: 214px;
+        -moz-animation: rotate-rev 10s infinite linear;
+        -webkit-animation: rotate-rev 10s infinite linear;
+        animation: rotate-rev 10s infinite linear;
+      }
+
+      .runningduck{
+        width: 80px;
+        height: 80px;
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -40px;
+        margin-top: -40px;
+        border-radius: 80px;
+      }
+      /*==============ANIMATIONS=================*/
+
+
+      /*==============ROTATE-REV=================*/
+
+      @-moz-keyframes rotate-rev{
+        0% {-moz-transform: rotate(0deg);}
+        100% {-moz-transform: rotate(-360deg);}
+      }
+
+      @-webkit-keyframes rotate-rev{
+        0% {-webkit-transform: rotate(0deg);}
+        100% {-webkit-transform: rotate(-360deg);}
+      }
+
+      @keyframes rotate-rev{
+        0% {transform: rotate(0deg);}
+        100% {transform: rotate(-360deg);}
+      }
+    </style>
   </body>
 </html>
