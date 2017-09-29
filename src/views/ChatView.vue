@@ -173,7 +173,7 @@ export default {
       if (window.navigator &&
           window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/)) {
         this.scrollToBottom();
-      } else if (this.$refs.messageBox.scrollPercentage > 0.975){
+      } else if (this.$refs.messageBox.scrollPercentage > 0.975) {
         this.scrollToBottom();
       }
     }
