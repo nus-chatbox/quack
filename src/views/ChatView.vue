@@ -13,7 +13,6 @@
         </q-toolbar-title>
         <q-btn flat icon="share" @click="$refs.shareModal.open();"></q-btn>
       </q-toolbar>
-      <resize-observer @notify="handleResize" />
       <q-scroll-area :style="{ height: (clientHeight - 10) + 'px' }" ref="messageBox">
         <div class="layout-padding message-box">
           <q-chat-message
@@ -38,6 +37,7 @@
         align="center"
         color="primary"
         @keydown.enter="sendMessage"
+        @click="inputClicked"
         :after="[
                   {
                     icon: 'send',
@@ -111,7 +111,11 @@ export default {
         const messages = this.$store.state.chat.roomIdToMessages[this.roomId];
         const lastSpeaker = messages[messages.length - 1].owner.id;
         const isLastSpeaker = lastSpeaker === this.$store.getters.getUserId;
-        if (isLastSpeaker || this.$refs.messageBox.scrollPercentage > 0.975) {
+        if (isLastSpeaker) {
+          this.scrollToBottom();
+        } else if (window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/)) {
+          this.scrollToBottom();
+        } else if (this.$refs.messageBox.scrollPercentage > 0.975) {
           this.scrollToBottom();
         }
       }, {
@@ -126,6 +130,7 @@ export default {
           clearTimeout(this.debounceId);
         }
         this.debounceId = setTimeout(() => {
+          window.a = this.$refs.messageBox;
           this.scrollToBottom();
           this.hasDoneFirstScroll = true;
           this.debounceId = null;
@@ -157,20 +162,21 @@ export default {
       // eslint-disable-next-line no-console
       .catch((err) => { console.error(err); });
     },
-    handleResize() {
-      if (this.debounceResizeId !== null) {
-        clearTimeout(this.debounceResizeId);
-      }
-      this.debounceResizeId = setTimeout(() => {
-        this.clientHeight = this.$el.clientHeight;
-        if (this.$refs.messageBox.scrollPercentage > 0.975) {
-          this.scrollToBottom();
-        }
-        this.debounceId = null;
-      }, 75);
-    },
     scrollToBottom() {
-      this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.scrollHeight, 1);
+      if (window.navigator && window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/)) {
+        window.scrollTo(0, 99999999999);
+      } else {
+        this.$refs.messageBox.setScrollPosition(this.$refs.messageBox.scrollHeight, 1);
+      }
+    },
+    inputClicked() {
+      if (window.navigator &&
+          !window.navigator.userAgent.match(/iPod|iPhone|iPad|Android/) &&
+          this.$refs.messageBox.scrollPercentage > 0.8) {
+        this.scrollToBottom();
+      } else {
+        this.scrollToBottom();
+      }
     }
   },
   props: ['roomId'],
@@ -184,8 +190,7 @@ export default {
       clientHeight: 0,
       unwatchMessage: null,
       hasDoneFirstScroll: false,
-      debounceId: null,
-      debounceResizeId: null
+      debounceId: null
     };
   },
   computed: {
