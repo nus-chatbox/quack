@@ -14,6 +14,7 @@
 Front end styling, Login service logic, Server-side API, Server configuration
 
 #### Daphne Won (A0126172M)
+Design, Front-end styling, Integrate sharing feature, Documentation
 
 ### Contact Us
 ---
