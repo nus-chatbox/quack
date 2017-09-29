@@ -35,6 +35,7 @@
                     // fresh content will have been added to the cache.
                     // It's the perfect time to display a "New content is
                     // available; please refresh." message in the page's interface.
+                    alert('We\'ve got some new feathers since you last visited, kindly refresh the browser to get the latest and greatest Quack features! ;)');
                     break;
 
                   case 'redundant':

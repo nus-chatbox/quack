@@ -171,8 +171,7 @@ export default {
       clientHeight: 0,
       unwatchMessage: null,
       hasDoneFirstScroll: false,
-      debounceId: null,
-      debounceResizeId: null
+      debounceId: null
     };
   },
   computed: {
