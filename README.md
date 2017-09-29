@@ -5,10 +5,10 @@
 ### Developers
 ---
 #### Ng Si Kai (A0124828B)
-
+Mobile UI implementation, Front end research, Front end logic, Call API
 
 #### Lau Shi Jie (A0111614X)
-User interface and experince design
+User interface and experience design
 
 #### Curtis Tan (A0129529W)
 Front end styling, Login service logic, Server-side API, Server configuration
