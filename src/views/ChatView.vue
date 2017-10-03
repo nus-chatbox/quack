@@ -20,9 +20,9 @@
             :key="index"
             :label="msg.label"
             :sent="msg.userId === userId"
-            :name="msg.owner.displayName"
+            :name="$escapeHtml(msg.owner.displayName)"
             avatar="/static/img/logo.png"
-            :text="[msg.text]"
+            :text="[$escapeHtml(msg.text)]"
             :stamp="msg.stamp"
           />
         </div>
