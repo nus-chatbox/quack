@@ -1,6 +1,6 @@
 <template>
-    <social-sharing v-bind:url="this.url"
-                    title="Quack"
+    <social-sharing :url="this.url" 
+                    title="Quack" 
                     description="Progressive geolocation based chat app"
                     quote="Quack is a geolocation based progressive web chat app."
                     inline-template>
@@ -43,7 +43,6 @@
 
 <script>
 export default {
-  props: ['url']
 };
 </script>
 
