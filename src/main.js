@@ -10,7 +10,7 @@ import '@/style/app.mat.styl';
 import App from '@/App';
 import router from '@/router';
 import store from '@/store';
-import vueSocialPlugin from 'vue-social-sharing/dist/vue-social-sharing.min';
+import vueSocialPlugin from 'vue-social-sharing';
 
 Vue.prototype.$escapeHtml = escapeHtml;
 Vue.config.productionTip = false;
