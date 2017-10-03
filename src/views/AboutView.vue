@@ -1,6 +1,6 @@
 <template>
 	<div>
-    <q-layout class="static-bg">
+    <q-layout class="static-bg fullscreen">
       <router-link to="/" class="fixed-bottom-right" style="margin-bottom:16px; margin-right:16px">
           <q-btn icon="arrow back" round big v-ripple color="primary">
           </q-btn>
@@ -15,7 +15,7 @@
           <p><strong>Quack allows you to connect with people in your surroundings.</strong></p>
 
           <p>Chat on a topic that is relevant to people around you, using location as the common denominator to get connected.</p>
-          
+
           <p><strong>Let's get Quacking!</strong></p>
         </div>
       </div>
@@ -50,4 +50,7 @@ export default {
 
 p
   font-size: 22px
+
+.fullscreen
+  overflow: auto
 </style>
