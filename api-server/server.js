@@ -135,7 +135,7 @@ app.post('/authenticate', (req, res) => {
     const fbToken = userAndToken[1];
 
     const fbId = user.id;
-    const displayName = user.name;
+    const displayName = user.name.substring(0, 25);
     return Promise.all([
       User.findOrCreate({
         facebookId: fbId,
@@ -167,7 +167,7 @@ app.post('/authenticate', (req, res) => {
 
 app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const id = req.user.id;
-  const updatedDisplayName = req.body.displayName;
+  const updatedDisplayName = req.body.displayName.substring(0, 25);
   const updatedUserLatitude = Number(req.body.latitude);
   const updatedUserLongitude = Number(req.body.longitude);
 
@@ -304,7 +304,7 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
   const ownerId = req.user.id;
   const latitude = Number(req.user.latitude);
   const longitude = Number(req.user.longitude);
-  const title = req.body.title;
+  const title = req.body.title.substring(0, 25);
 
   if (_.isNaN(latitude) || _.isNaN(longitude)) {
     res.status(400).send({
