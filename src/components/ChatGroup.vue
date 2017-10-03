@@ -8,9 +8,9 @@
           </q-item-tile>
         </q-item-side>
         <q-item-main
-         :label="name"
+         :label="$escapeHtml(name)"
          label-lines="1"
-         :sublabel="lastMessage"
+         :sublabel="$escapeHtml(lastMessage)"
          sublabel-lines="2"
         />
         <q-item-side right :stamp="roomDistance" />
