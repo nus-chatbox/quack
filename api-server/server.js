@@ -167,7 +167,7 @@ app.post('/authenticate', (req, res) => {
 
 app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, res) => {
   const id = req.user.id;
-  const updatedDisplayName = req.body.displayName.substring(0, 25);
+  const updatedDisplayName = req.body.displayName;
   const updatedUserLatitude = Number(req.body.latitude);
   const updatedUserLongitude = Number(req.body.longitude);
 
@@ -187,7 +187,7 @@ app.patch('/users', passport.authenticate(['jwt'], { session: false }), (req, re
     patchObject.longitude = updatedUserLongitude;
   }
   if (!_.isEmpty(updatedDisplayName)) {
-    patchObject.displayName = updatedDisplayName;
+    patchObject.displayName = updatedDisplayName.substring(0, 25);
   }
 
   User.query().patch(patchObject).where('id', id).then((updateCount) => {
@@ -304,7 +304,7 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
   const ownerId = req.user.id;
   const latitude = Number(req.user.latitude);
   const longitude = Number(req.user.longitude);
-  const title = req.body.title.substring(0, 25);
+  const title = req.body.title;
 
   if (_.isNaN(latitude) || _.isNaN(longitude)) {
     res.status(400).send({
@@ -326,7 +326,7 @@ app.post('/rooms', passport.authenticate(['jwt'], { session: false }), (req, res
     ownerId,
     latitude,
     longitude,
-    title
+    title: title.substring(0, 25)
   });
 
   roomPromise.then((room) => {
